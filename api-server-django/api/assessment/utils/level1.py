@@ -148,8 +148,6 @@ def insert_image_into_excel(folder_path, labels, percentages, worksheet_name, in
         for index,job in enumerate(user_profile.job_aspirations.all()):
             replacements[f"B{27+index}"] = job.title
         
-
-        printsos
         update_worksheet_cells(worksheet,replacements)
         update_page2_cells(worksheet, inclines)
     elif worksheet_name == 'Page3':
@@ -197,7 +195,7 @@ def update_page2_cells(worksheet, inclines):
     replacements = {
             "D15": ['input_dimension',inclines['feature']],
             "D19":inclines['purpose_statement'],
-            "D24":"You" + inclines['thrive_environment'],
+            "D24":"You " + inclines['thrive_environment'],
             "D42":inclines['career_inclination_statement'],
             "D46":inclines['quote'],
     }
@@ -222,7 +220,7 @@ def update_page3_cells(worksheet, inclines):
     replacements = {
             "B8": ['input_dimension',inclines['feature']],
             "B13":inclines['purpose_statement'],
-            "B16":"You" + inclines['thrive_environment'],
+            "B16":"You " + inclines['thrive_environment'],
             "B34":inclines['career_inclination_statement'],
             "B40":inclines['quote']
     }
@@ -252,7 +250,7 @@ def update_page6_cells(worksheet, inclines):
     replacements = {
         "B7":["input_dimension",inclines['feature']],
         "B13":inclines['purpose_statement'],
-        "B16":"You"+ inclines['thrive_environment'],
+        "B16":"You "+ inclines['thrive_environment'],
         "B34":inclines['career_inclination_statement'],
         "B40":inclines['quote']
 
@@ -280,13 +278,23 @@ def update_page4_cells(worksheet,virtues,folder_path):
 
 
     
-
+    middle_three = []
     for i in range(27,30):
         worksheet[f"B{i}"] = f'{i-26}. {virtues[i-24]["virtue"]}'
+        middle_three.append(virtues[i-24]["virtue"])
     
+    bottom_three = []
     for i in range(37,40):
         worksheet[f"B{i}"] = f'{i-36}. {virtues[i-31]["virtue"]}'
+        bottom_three.append(virtues[i-31]["virtue"])
 
+    replacements = {
+             "B32": ['middle_three_virtues',', '.join(middle_three[:-1]) + ' and ' + middle_three[-1]],
+             "B42": ['bottom_three_virtues',', '.join(bottom_three[:-1]) + ' and ' + bottom_three[-1]],
+
+    }
+    
+    update_worksheet_cells(worksheet,replacements)
     cell_coordinates = [(14, 6), (18, 2), (21, 6)]
     for i in range(3):
         data = [virtues[i]['rank'] * 2]

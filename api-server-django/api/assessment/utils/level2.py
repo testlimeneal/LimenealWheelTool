@@ -45,7 +45,7 @@ def update_worksheet_cells(worksheet, replacements):
 
 
 
-def Generate_level2_Report(res,nlp_data,bucket_mapping):
+def Generate_level2_Report(res,nlp_data,bucket_mapping,job_info):
     
     random_hash = str(uuid.uuid4().hex)
     new_folder_path = create_output_folder(random_hash)
