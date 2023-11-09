@@ -179,7 +179,6 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         feature_data = details[bucket_id]
 
         b35_cell = worksheet['B35'].value.replace('input_emotion',feature_data['emotion']).replace('input_colour',feature_data['colour'])
-        c39_cell = worksheet['C39'].value.replace('input_virtue',feature_data['virtue']).replace('input_dimmension',bucket['name'])
 
         replacements = {
             'B12': bucket['name'],
@@ -188,7 +187,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
             'B33' : ['input_dimmension',bucket['name']],
             'B34' : ['input_dimmension',bucket['name']],
             'B35' : b35_cell,
-            'C39' : c39_cell,
+            'C39' : ['input_virtue',feature_data['virtue']],
             'C40': feature_data[f'{type}_virtue']
         }
 
@@ -210,7 +209,6 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         bucket_id = bucket['id']
         feature_data = details[bucket_id]
         b33_cell = worksheet['B33'].value.replace('input_emotion',feature_data['emotion']).replace('input_colour',feature_data['colour'])
-        c36_cell = worksheet['C36'].value.replace('input_virtue',feature_data['virtue']).replace('input_dimmension',bucket['name'])
         replacements = {
             'B8': bucket['name'],
             'G7' : feature_data[f'{type}_motivation'],
@@ -220,7 +218,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
             'B33' : b33_cell,
             # 'C39' : ['input_dimmension',bucket['name']],
             'C37': feature_data[f'{type}_virtue'],
-            'C36' : c36_cell
+            'C36' : ['input_virtue',feature_data['virtue']],
         }
         for i,j in enumerate(feature_data['purpose_statements'].split('\n')):
             replacements[f"B{13+i}"] = j
@@ -237,13 +235,12 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         bucket_id = bucket['id']
         feature_data = details[bucket_id]
 
-        c31_cell = worksheet['C31'].value.replace('input_virtue',feature_data['virtue']).replace('input_dimmension',bucket['name'])
 
         replacements = {
             'B12': bucket['name'],
             'G10' : feature_data[f'{type}_motivation'],
             # 'B30' : feature_data['motivation'],
-            'C31' : c31_cell,
+            'C31' : ['input_virtue',feature_data['virtue']],
             # 'B35' : b35_cell,
             # 'C39' : c39_cell,
             'C32': feature_data[f'{type}_virtue']
