@@ -37,7 +37,7 @@ def Generate_level1_Report(input_label, input_percentages, inclines,virtues,job_
 
     create_horizontal_bar_chart(labels, percentages, new_folder_path)
     create_line_chart(virtues, new_folder_path)
-    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page2', inclines=inclines[0])
+    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page2', inclines=inclines[0],user_profile=user_profile)
     excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page3', inclines=inclines[1],excel=excel)
     excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page6', inclines=inclines[2],excel=excel)
     excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page4',excel=excel,virtues=virtues)
@@ -129,6 +129,14 @@ def insert_image_into_excel(folder_path, labels, percentages, worksheet_name, in
     if worksheet_name == 'Page2':
         add_image_to_worksheet(worksheet,folder_path,"top3dimmensions-1.png",8,7,330,130)
         replacements = {
+            "B9":user_profile.name,
+            "B11":user_profile.dob,
+            "B13":user_profile.gender,
+            "B15":user_profile.status,
+            "B17":user_profile.mobile_no,
+            "B19":user_profile.user.email,
+            "B21":user_profile.address,
+            "B33":user_profile.goals,
             "D8": labels[0],
             "D10": labels[1],
             "D11": labels[2],
@@ -136,7 +144,12 @@ def insert_image_into_excel(folder_path, labels, percentages, worksheet_name, in
             "F10": round(percentages[1] * 100 / 72),
             "F11": round(percentages[2] * 100 / 72)
         }
+        
+        for index,job in enumerate(user_profile.job_aspirations.all()):
+            replacements[f"B{27+index}"] = job.title
+        
 
+        printsos
         update_worksheet_cells(worksheet,replacements)
         update_page2_cells(worksheet, inclines)
     elif worksheet_name == 'Page3':
