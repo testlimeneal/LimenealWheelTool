@@ -1,5 +1,9 @@
 api-server-django/api/assessment/reports/level1/
 api-server-django/api/assessment/reports/level2/
 
+api-server-django/static
+api-server-django/staticfiles
+api-server-django/build
+
 
 api-server-django/db_dev.sqlite3
