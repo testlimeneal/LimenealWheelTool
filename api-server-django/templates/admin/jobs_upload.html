@@ -1,0 +1,10 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <h2>Import Jobs from CSV</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="csv_file" accept=".csv" required>
+        <button type="submit">Import</button>
+    </form>
+{% endblock %}
