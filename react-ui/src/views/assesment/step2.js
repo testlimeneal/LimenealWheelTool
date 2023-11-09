@@ -141,6 +141,19 @@ function Step2(props) {
     const handleNext = () => {
         const questionId = questions[activeQuestion]['id'];
         const quizId = questions[activeQuestion]['quiz'];
+        const negation = questions[activeStep]['negation']
+
+        const mapping = {
+            0: 9,
+            1: 9,
+            2: 9,
+            3: 8,
+            4: 8,
+            5: 8,
+            6: 7,
+            7: 7,
+            8: 7
+        }
 
         if ([0, 1, 2].includes(activeQuestion)) {
             const addToRankings = (items, rankOffset) => {
@@ -149,14 +162,14 @@ function Step2(props) {
                         answer: option.id,
                         question: questionId,
                         quiz: quizId,
-                        rank: rankOffset - index
+                        rank: negation ? 10 - mapping[index] - rankOffset : mapping[index] - rankOffset
                     });
                 });
             };
 
-            addToRankings(columns['bucket1']['items'], 27);
-            addToRankings(columns['bucket2']['items'], 18);
-            addToRankings(columns['bucket3']['items'], 9);
+            addToRankings(columns['bucket1']['items'], 0);
+            addToRankings(columns['bucket2']['items'], 3);
+            addToRankings(columns['bucket3']['items'], 6);
 
             // question_rankings.push(rankings);
 
