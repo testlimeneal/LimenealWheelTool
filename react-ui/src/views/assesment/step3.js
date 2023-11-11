@@ -151,7 +151,7 @@ function Step2(props) {
                         answer: option.id,
                         question: questionId,
                         quiz: quizId,
-                        rank: negation ? 10 - mapping[index] - rankOffset : mapping[index] - rankOffset
+                        rank: negation ? 10 - (mapping[index] - rankOffset) : mapping[index] - rankOffset
                     });
                 });
             };

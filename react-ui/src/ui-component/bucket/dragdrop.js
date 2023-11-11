@@ -141,8 +141,7 @@ const DragAndDropComponent = ({ columns, onDragEnd, optionsColumns, otherColumns
                                                                                 // Add specific styles for activeQuestion 1 here
                                                                             },
                                                                             2: {
-                                                                                backgroundColor: snapshot.isDragging ? '#263B4A' : 'white',
-                                                                                ...commonStyles
+                                                                                 ...commonStyles
                                                                                 // Add specific styles for activeQuestion 2 here
                                                                             }
                                                                         };

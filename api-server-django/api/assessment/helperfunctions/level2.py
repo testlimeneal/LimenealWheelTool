@@ -17,20 +17,30 @@ def process_level2_career_report(user_id):
         nlp_count[i.nlp] = nlp_count.get(i.nlp, 0) + 1
     bucket_names = {}
 
+    activities = {"bucket1":{},"bucket2":{},"bucket3":{}}
     for response in dimmensions:
         option_bucket = response.answer.bucket if response.answer.bucket else None
         option_rank = response.rank if response.rank else None
 
-        if response.question.negation:
-
-            dimmensions_count[option_bucket.id] = dimmensions_count.get(
-                option_bucket.id, 0) + 10  - option_rank
-            bucket_names[option_bucket.id] = option_bucket.feature
-        else:
+   
            
-            dimmensions_count[option_bucket.id] = dimmensions_count.get(
-                option_bucket.id, 0) + option_rank
-            bucket_names[option_bucket.feature] = dimmensions_count[option_bucket.id]
+        dimmensions_count[option_bucket.id] = dimmensions_count.get(
+            option_bucket.id, 0) + option_rank
+        bucket_names[option_bucket.feature] = dimmensions_count[option_bucket.id]
+        bucket_names[option_bucket.id] = option_bucket.feature
+
+
+
+        if option_rank in [9,8,7]:
+            activities.setdefault('bucket1', {}).setdefault(option_bucket.id, {})[response.answer.text] = \
+            activities['bucket1'].get(option_bucket.id, {}).get(response.answer.text, 0) + 1
+        elif option_rank in [6,5,4]:
+            activities.setdefault('bucket2', {}).setdefault(option_bucket.id, {})[response.answer.text] = \
+            activities['bucket2'].get(option_bucket.id, {}).get(response.answer.text, 0) + 1
+        elif option_rank in [3,2,1]:
+            activities.setdefault('bucket3', {}).setdefault(option_bucket.id, {})[response.answer.text] = \
+            activities['bucket3'].get(option_bucket.id, {}).get(response.answer.text, 0) + 1
+
 
     sorted_level2 = sorted(dimmensions_count.items(),
                            key=lambda x: x[1], reverse=True)
@@ -97,7 +107,11 @@ def process_level2_career_report(user_id):
                     res.append([purpose_ids[0],passion_ids[1],passion_ids[2]])
             else:
                 res.append([purpose_ids[0],passion_ids[1],purpose_ids[1]])
-                
+
+        # print(res)
+        # print(activities)
+        for dim in res[i]:
+            dim['activities'] = activities[f'bucket{i+1}'][dim['id']] 
 
         res_ids = {item['id'] for item in res[i]}
         passion_ids = [item for item in passion_ids if item['id'] not in res_ids]
@@ -118,19 +132,12 @@ def process_level2_career_report(user_id):
     
     # print(bucket_instances)
 
-    job_info = []
-
-    for job in user_profile.job_aspirations.all():
-        job_info.append({
-            'job_name': job.title,
-            'career_cluster': job.career_cluster.name if job.career_cluster else None,
-            'lwdimension_field1': job.lwdimension_field1.feature if job.lwdimension_field1 else None,
-            'lwdimension_field2': job.lwdimension_field2.feature if job.lwdimension_field2 else None,
-            'lwdimension_field3': job.lwdimension_field3.feature if job.lwdimension_field3 else None
-        })
+    
 
     dimmensions_data = [sorted(i, key=lambda x: x['value'],reverse=True) for i in res]
-    file_path = Generate_level2_Report(dimmensions_data,nlp_data,bucket_instances,job_info)
+    
+
+    file_path = Generate_level2_Report(dimmensions_data,nlp_data,bucket_instances,user_profile)
     
     level2_data = {"value":dimmensions_data,"file_path" : file_path}
     user_profile.level2 = level2_data

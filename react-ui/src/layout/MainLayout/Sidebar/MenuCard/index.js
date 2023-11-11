@@ -69,7 +69,7 @@ const UpgradePlanCard = () => {
                     </Grid>
                     <Grid item>
                         <Typography variant="subtitle2" className={classes.tagLine}>
-                        Unlock your Champion Potential: Discover Your Purpose, Passion, and Maximize Effectiveness!
+                        Unlock your Champion Potential: Discover Your Purpose, Passion, Potential and Maximize Effectiveness!
                         </Typography>
                     </Grid>
                     <Grid item>

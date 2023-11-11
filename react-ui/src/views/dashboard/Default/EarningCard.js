@@ -185,7 +185,7 @@ const EarningCard = ({ isLoading }) => {
                             </Grid>
                         </Grid>
                         <Grid item sx={{ mb: 1.25 }}>
-                            <Typography className={classes.subHeading}>Your Gateway to be a Champion by Knowing and leveraging you purpose, Passion & potential leading you to the path of maximum effectiveness and fulfilment in your endeavors.</Typography>
+                            <Typography className={classes.subHeading}>Your Gateway to be a Champion by Knowing and leveraging you Purpose, Passion & Potential leading you to the path of maximum effectiveness and fulfilment in your endeavors.</Typography>
                         </Grid>
                     </Grid>
                 </MainCard>

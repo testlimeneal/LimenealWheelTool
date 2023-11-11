@@ -52,7 +52,6 @@ def Generate_level1_Report(input_label, input_percentages, inclines,virtues,job_
 def update_worksheet_cells(worksheet, replacements):
     
     for cell_reference, replacement_value in replacements.items():
-        # print(cell_reference)
         
         if isinstance(replacement_value, list):
             param,newValue = replacement_value
@@ -106,9 +105,6 @@ def create_line_chart(virtues, folder_path):
     plt.xticks(x, variables, rotation=45)  # Set variable names as x-axis labels with 45-degree rotation4
 
     y_ticks = [i for i in range(0, 101, 10)]
-    # y_labels = [f"{y}-{y+10}" for y in range(0, 100, 10)]
-
-    # plt.yticks(y_ticks)
 
     plt.grid()
 
@@ -209,9 +205,6 @@ def update_page2_cells(worksheet, inclines):
         cont = cont + 2   
     
     
-    # careers = inclines['careers'].split(",")[:3]
-    # for i in range(46, 49):
-    #     replacements[f"E{i}"] = careers[i - 46].strip() 
     update_worksheet_cells(worksheet,replacements)
     add_image_to_worksheet(worksheet,assets_folder,f"{inclines['feature']}.png",10,7,250,325)
 
@@ -227,17 +220,12 @@ def update_page3_cells(worksheet, inclines):
 
 
 
-    # worksheet["B10"] = worksheet["B10"].value.replace("input_dimension", inclines['feature'])
-
     inclinations = inclines['inclinations'].split('\n')
     cont = 21
     for i in range(len(inclinations)):
         replacements[f"B{cont}"] = inclinations[i]
         cont = cont + 2
     
-    # careers = inclines['careers'].split(",")[:5]
-    # for i in range(37, 40):
-    #     replacements[f"C{i}"] = careers[i - 37]
     
 
     update_worksheet_cells(worksheet,replacements)
@@ -316,16 +304,6 @@ def update_page4_cells(worksheet,virtues,folder_path):
 
 
 def update_page5_cells(worksheet,folder_path,labels,job_info,user_profile):
-   
-    # worksheet["B7"] = worksheet["B7"].value.replace("input_dimension", inclines['feature'])
-    # worksheet["B10"] = worksheet["B10"].value.replace("input_dimension", inclines['feature'])
-   
-
-    # worksheet["B15"] = job_info[0]['career_cluster']
-    # worksheet["C15"] = job_info[0]['job_name']
-    # worksheet["E15"] = job_info[0]['lwdimension_field1']
-    # worksheet["E16"] = job_info[0]['lwdimension_field2']
-    # worksheet["E17"] = job_info[0]['lwdimension_field3']
 
 
     fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
@@ -366,15 +344,6 @@ def update_page5_cells(worksheet,folder_path,labels,job_info,user_profile):
             worksheet[f"B{23+annotation_indices.index(i)}"] = recipe[i].capitalize()
             worksheet[f"C{23+annotation_indices.index(i)}"] = ROLES[recipe[i].lower()]
 
-        # else:
-        #     ang = (p.theta2 - p.theta1) / 2. + p.theta1
-        #     y = np.sin(np.deg2rad(ang))
-        #     x = np.cos(np.deg2rad(ang))
-        #     horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
-        #     ax.text(x, y, recipe[i], horizontalalignment=horizontalalignment, fontsize=10, color='black')
-
-            # p.set_alpha(1)  # Hide wedges that are not annotated
-
     # Add 'A' to the center of the pie chart with path effects
     center_text = plt.gca().text(0.0, 0.0, 'Limeneal', color='white', ha='center', va='center', size=10,fontfamily='sans-serif')
     stroke = withStroke(linewidth=3, foreground='black')
@@ -387,8 +356,6 @@ def update_page5_cells(worksheet,folder_path,labels,job_info,user_profile):
     plt.savefig(os.path.join(folder_path, "job1dimmensions.png"), dpi=300,transparent=True)
     plt.clf()
     plt.close()
-
-     # worksheet["B12"] = inclines['purpose_statement']4
     
     add_image_to_worksheet(worksheet,folder_path,"job1dimmensions.png",12,2,500,230)
 

@@ -3,11 +3,13 @@ import uuid
 from openpyxl import load_workbook
 from openpyxl.drawing.image import Image
 from api.assessment.constants import ROLES, COLOR_MAPPING
-from matplotlib.patheffects import withStroke
-import matplotlib.patheffects as path_effects
+
+from api.assessment.utils.common import generate_user_pie_chart,generate_jobs_pie_chart
 import matplotlib
 matplotlib.use('agg')
 from matplotlib import pyplot as plt
+from matplotlib.patheffects import withStroke
+import matplotlib.patheffects as path_effects
 import numpy as np
 import excel2img
 import img2pdf
@@ -20,6 +22,20 @@ assets_folder = os.path.join(API_DIR, "assessment","assets","level1")
 emotions_path = os.path.join(API_DIR, "assessment","assets","level2", 'emotions')
 virtues_path = os.path.join(API_DIR, "assessment","assets","level2", 'virtues')
 
+
+def find_index_of_dimmension(data, target_name):
+    for i, sublist in enumerate(data):
+        for item in sublist:
+            if item['name'] == target_name:
+                if i == 0:
+                    return "Most Preferred"
+                elif i == 1:
+                    return "Lesser Preferred"
+                elif i == 2:
+                    return "Least Preferred"
+                else:
+                    return f"Preference Level {i}"
+    return None
 
 def add_image_to_worksheet(worksheet, folder_path, image_filename, row, column, width, height):
     img = Image(os.path.join(folder_path, image_filename))
@@ -45,20 +61,11 @@ def update_worksheet_cells(worksheet, replacements):
 
 
 
-def Generate_level2_Report(res,nlp_data,bucket_mapping,job_info):
+def Generate_level2_Report(res,nlp_data,bucket_mapping,user_profile):
     
     random_hash = str(uuid.uuid4().hex)
     new_folder_path = create_output_folder(random_hash)
-
-    # labels = input_label
-    # percentages = input_percentages
-
-    # create_horizontal_bar_chart(labels, percentages, new_folder_path)
-    # create_line_chart(virtues, new_folder_path)
-    # print(res)
-    # return
     
-
     excel = insert_image_into_excel(worksheet_name='Page2',data=res)
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page3',data=[res[2],nlp_data])
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page4',data=[res[0][0],bucket_mapping,'power'])
@@ -70,12 +77,8 @@ def Generate_level2_Report(res,nlp_data,bucket_mapping,job_info):
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page10',data=[res[2][0],bucket_mapping,'pain'])
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page11',data=[res[2][1],bucket_mapping,'pain'])
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page12',data=[res[2][2],bucket_mapping,'pain'])
-    # print(res)
-    # return
-    # excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page3', inclines=inclines[1],excel=excel)
-    # excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page6', inclines=inclines[2],excel=excel)
-    # excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page4',excel=excel,virtues=virtues)
-    # excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page5',excel=excel,job_info=job_info)
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page13',data=[new_folder_path,user_profile,res])
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page14',data=[new_folder_path,user_profile,res])
     excel.save(os.path.join(new_folder_path, "level2report.xlsx"))
 
     convert_excel_to_pdf(new_folder_path,"type")
@@ -148,12 +151,9 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
                 replacements[f"M{sr_no}"] = round(item['value'])
                 if sr_no-22 < 6:
                     replacements[cell_row[sr_no-22]] = ROLES[item['name'].lower()]
-                    # print(ROLES[item['name'].lower()])
                 sr_no = sr_no + 1
         
         update_worksheet_cells(worksheet,replacements)
-        # add_image_to_worksheet(worksheet,folder_path,"top3dimmensions.png",8,7,330,130)  
-        # update_page2_cells(worksheet, inclines)
     elif worksheet_name == 'Page3':
         
         replacements = {}
@@ -178,7 +178,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         bucket_id = bucket['id']
         feature_data = details[bucket_id]
 
-        b35_cell = worksheet['B35'].value.replace('input_emotion',feature_data['emotion']).replace('input_colour',feature_data['colour'])
+        b35_cell = worksheet['B35'].value.replace('input_emotion',feature_data['emotion']).replace('input_color',feature_data['colour'])
 
         replacements = {
             'B12': bucket['name'],
@@ -197,6 +197,9 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         for i,j in enumerate(feature_data['passion_statements'].split('\n')):
             replacements[f"G{16+i}"] = j
 
+        for i,j in enumerate(dict(sorted(bucket['activities'].items(), key=lambda item: item[1], reverse=True)).keys()):
+            replacements[f'B{24+i}'] = j 
+
         add_image_to_worksheet(worksheet,assets_folder,f"{bucket['name']}.png",7,4,250,325)
         add_image_to_worksheet(worksheet,activities_path,f"{bucket['name']}.png",23,6,120,120)
         add_image_to_worksheet(worksheet,emotions_path,f"{bucket['name']}.png",34,7,120,120)
@@ -208,7 +211,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         bucket,details,type = data
         bucket_id = bucket['id']
         feature_data = details[bucket_id]
-        b33_cell = worksheet['B33'].value.replace('input_emotion',feature_data['emotion']).replace('input_colour',feature_data['colour'])
+        b33_cell = worksheet['B33'].value.replace('input_emotion',feature_data['emotion']).replace('input_color',feature_data['colour'])
         replacements = {
             'B8': bucket['name'],
             'G7' : feature_data[f'{type}_motivation'],
@@ -216,7 +219,6 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
             'B31' : ['input_dimmension',bucket['name']],
             'B32' : ['input_dimmension',bucket['name']],
             'B33' : b33_cell,
-            # 'C39' : ['input_dimmension',bucket['name']],
             'C37': feature_data[f'{type}_virtue'],
             'C36' : ['input_virtue',feature_data['virtue']],
         }
@@ -225,9 +227,14 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         for i,j in enumerate(feature_data['passion_statements'].split('\n')):
             replacements[f"G{13+i}"] = j
 
+        for i,j in enumerate(dict(sorted(bucket['activities'].items(), key=lambda item: item[1], reverse=True)).keys()):
+            replacements[f'B{21+i}'] = j 
+
+        add_image_to_worksheet(worksheet,assets_folder,f"{bucket['name']}.png",4,4,250,325)
         add_image_to_worksheet(worksheet,activities_path,f"{bucket['name']}.png",20,6,120,120)
         add_image_to_worksheet(worksheet,emotions_path,f"{bucket['name']}.png",30,7,120,120)
         add_image_to_worksheet(worksheet,virtues_path,f"{bucket['name']}.png",35,2,120,120)
+
         update_worksheet_cells(worksheet,replacements)
 
     elif worksheet_name in ['Page7','Page8','Page9','Page10','Page11','Page12']:
@@ -239,10 +246,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         replacements = {
             'B12': bucket['name'],
             'G10' : feature_data[f'{type}_motivation'],
-            # 'B30' : feature_data['motivation'],
             'C31' : ['input_virtue',feature_data['virtue']],
-            # 'B35' : b35_cell,
-            # 'C39' : c39_cell,
             'C32': feature_data[f'{type}_virtue']
         }
 
@@ -252,22 +256,95 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         for i,j in enumerate(feature_data['passion_statements'].split('\n')):
             replacements[f"G{18+i}"] = j
 
+        for i,j in enumerate(dict(sorted(bucket['activities'].items(), key=lambda item: item[1], reverse=True)).keys()):
+            replacements[f'B{26+i}'] = j 
+
         add_image_to_worksheet(worksheet,assets_folder,f"{bucket['name']}.png",7,4,250,325)
         add_image_to_worksheet(worksheet,activities_path,f"{bucket['name']}.png",25,6,120,120)
         add_image_to_worksheet(worksheet,virtues_path,f"{bucket['name']}.png",30,2,120,120)
 
         update_worksheet_cells(worksheet,replacements)
 
-    #     update_page3_cells(worksheet, inclines)
-    # elif worksheet_name == 'Page6':
-    #     update_page3_cells(worksheet, inclines)
-    # elif worksheet_name == 'Page4':
-    #     add_image_to_worksheet(worksheet,folder_path,"virtueschart.png",7,7,350,200)
-    #     update_page4_cells(worksheet,virtues,folder_path)
-    # elif worksheet_name == 'Page5':
-    #     update_page5_cells(worksheet,folder_path,labels,job_info)
+    elif worksheet_name == 'Page13':
 
-    
+        folder_path,user_profile,user_data = data
+
+        user_top3 = user_data[0]
+        user_top3_labels = [i['name'] for i in user_top3]
+
+        generate_user_pie_chart(user_top3_labels,folder_path)
+        job_info = generate_jobs_pie_chart(folder_path,user_profile,count=3)
+
+        add_image_to_worksheet(worksheet,folder_path,"job1dimmensions.png",12,2,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",12,6,500,230)
+        
+        add_image_to_worksheet(worksheet,folder_path,"job2dimmensions.png",32,2,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",32,6,500,230)
+
+        replacements = {
+            "B11":f"{job_info[0]['job_name']}'s Inclinations",
+            "F11":['user_name',user_profile.name],
+            "B21":['job_name',job_info[0]['job_name']],
+            "F21":['user_name',user_profile.name],
+            "B29":f"{job_info[1]['job_name']}'s Inclinations",
+            "F29":['user_name',user_profile.name],
+            "F43":['user_name',user_profile.name],
+            "B43":['job_name',job_info[1]['job_name']],
+        }
+
+        for i in range(23, 26):
+            field_key = f"lwdimension_field{i - 22}"
+            dimension_value = job_info[0][field_key]
+
+            replacements[f"B{i}"] = dimension_value
+            replacements[f"C{i}"] = ROLES[dimension_value.lower()]
+
+            replacements[f"F{i}"] = dimension_value
+            replacements[f"G{i}"] = find_index_of_dimmension(user_data, dimension_value)
+        
+        
+        for i in range(45, 48):
+            field_key = f"lwdimension_field{i - 44}"
+            dimension_value = job_info[1][field_key]
+
+            replacements[f"B{i}"] = dimension_value
+            replacements[f"C{i}"] = ROLES[dimension_value.lower()]
+
+            replacements[f"F{i}"] = dimension_value
+            replacements[f"G{i}"] = find_index_of_dimmension(user_data, dimension_value)
+            
+        update_worksheet_cells(worksheet,replacements)
+
+    elif worksheet_name == 'Page14':
+
+        folder_path,user_profile,user_data = data
+
+        
+        # user_top3_labels = [i['name'] for i in user_top3]
+
+        job_info = generate_jobs_pie_chart(user_profile=user_profile,count=0)
+
+        add_image_to_worksheet(worksheet,folder_path,"job3dimmensions.png",12,2,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",12,6,500,230)
+
+        replacements = {
+            "B11":f"{job_info[2]['job_name']}'s Inclinations", 
+            "F11":['user_name',user_profile.name],
+            "F21":['user_name',user_profile.name],
+            "B21":['job_name',job_info[2]['job_name']], 
+        }
+        for i in range(23, 26):
+            field_key = f"lwdimension_field{i - 22}"
+            dimension_value = job_info[2][field_key]
+
+            replacements[f"B{i}"] = dimension_value
+            replacements[f"C{i}"] = ROLES[dimension_value.lower()]
+
+            replacements[f"F{i}"] = dimension_value
+            replacements[f"G{i}"] = find_index_of_dimmension(user_data, dimension_value)
+        
+ 
+        update_worksheet_cells(worksheet,replacements)
     return workbook
 
 def convert_excel_to_pdf(folder_path, type, excel_filename="level2report.xlsx", num_pages=14, page_prefix="Page"):
@@ -277,7 +354,6 @@ def convert_excel_to_pdf(folder_path, type, excel_filename="level2report.xlsx", 
     #     pages_to_include = [1, 2, 3,6]
     # elif type == "Leadership":
     #     pages_to_include = [1, 2, 4]
-    # else:
     pages_to_include = list(range(1, num_pages + 1))
 
     for page_num in pages_to_include:
@@ -298,7 +374,7 @@ def convert_excel_to_pdf(folder_path, type, excel_filename="level2report.xlsx", 
     with open(pdf_output_path, "wb") as file:
         file.write(pdf_data)
 
-    # for filename in os.listdir(folder_path):
-    #     file_path = os.path.join(folder_path, filename)
-    #     if filename != "output.pdf" and os.path.isfile(file_path):
-    #         os.remove(file_path)
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        if filename != "output.pdf" and os.path.isfile(file_path):
+            os.remove(file_path)

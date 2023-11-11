@@ -8,8 +8,8 @@ import { Link, Typography, Stack } from '@material-ui/core';
 const AuthFooter = () => {
     return (
         <Stack direction="row" justifyContent="space-between">
-            <Typography variant="subtitle2" component={Link} href="https://paracleteps.com/" target="_blank" underline="hover">
-                Paraclete People Solutions
+            <Typography variant="subtitle2" component={Link} href="https://paracletepeople.com/" target="_blank" underline="hover">
+                Limeneal Wheel Tool®
             </Typography>
             {/* <Typography variant="subtitle2" component={Link} href="https://codedthemes.com" target="_blank" underline="hover">
                 &copy; codedthemes.com

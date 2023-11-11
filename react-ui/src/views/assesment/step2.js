@@ -141,7 +141,7 @@ function Step2(props) {
     const handleNext = () => {
         const questionId = questions[activeQuestion]['id'];
         const quizId = questions[activeQuestion]['quiz'];
-        const negation = questions[activeStep]['negation']
+        const negation = questions[activeQuestion]['negation']
 
         const mapping = {
             0: 9,
@@ -162,7 +162,7 @@ function Step2(props) {
                         answer: option.id,
                         question: questionId,
                         quiz: quizId,
-                        rank: negation ? 10 - mapping[index] - rankOffset : mapping[index] - rankOffset
+                        rank: negation ? 10 - (mapping[index] - rankOffset) : mapping[index] - rankOffset
                     });
                 });
             };
