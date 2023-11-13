@@ -251,8 +251,6 @@ class DownloadReportView(generics.GenericAPIView):
         
         if "Level 3" in report.level and "Career" in report.report_type:
             file_path = process_level3_career_report(user_id,user_profile)
-
-            return Response(0)
             
             
         return generate_report(file_path)

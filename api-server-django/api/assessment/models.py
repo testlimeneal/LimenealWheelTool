@@ -15,6 +15,9 @@ class Virtue(models.Model):
     virtue = models.CharField(max_length=100)
     text = models.CharField(max_length=200,null=True,blank=True)
 
+    level3_power = models.CharField(max_length=300,null=True,blank=True,default='meaning_power')
+    level3_push = models.CharField(max_length=300,null=True,blank=True,default='meaning_push')
+    level3_pain = models.CharField(max_length=300,null=True,blank=True,default='meaning_pain')
 
     def __str__(self):
         return f"Virtue for {self.virtue} | {self.id}"
@@ -274,6 +277,9 @@ class Trait(models.Model):
 
     type = models.CharField(max_length=10, choices=TYPE_CHOICES,default='variable')    
 
+    level3_power = models.CharField(max_length=300,null=True,blank=True,default='meaning_power')
+    level3_push = models.CharField(max_length=300,null=True,blank=True,default='meaning_push')
+    level3_pain = models.CharField(max_length=300,null=True,blank=True,default='meaning_pain')
 
     def __str__(self):
         return f"{self.name}"

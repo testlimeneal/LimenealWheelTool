@@ -1,7 +1,8 @@
 from api.assessment.models import  Level3Response,Level3Group
 from api.assessment.utils.level1 import Generate_level1_Report
 from api.assessment.utils.level2 import Generate_level2_Report
-from api.assessment.helperfunctions.common import get_feature_name_by_id
+from api.assessment.utils.level3 import Generate_level3_Report
+from api.assessment.helperfunctions.common import get_feature_name_by_id,get_virtue_object_by_dimmension_id
 
 
 def process_level3_career_report(user_id,user_profile):
@@ -18,9 +19,13 @@ def process_level3_career_report(user_id,user_profile):
             dimension_dict[answer_id] = {
                 'value': 0,
                 'name': response.answer.name,
-                'type': response.answer.type
+                'type': response.answer.type,
+                'statements_dict' : {
+                    'level3_power': response.answer.level3_power,
+                    'level3_push': response.answer.level3_push,
+                    'level3_pain': response.answer.level3_pain
+                }
             }
-    
         dimension_dict[answer_id]['value'] += response.rank
     
     # print(dimensions)
@@ -43,20 +48,52 @@ def process_level3_career_report(user_id,user_profile):
             if 'value' in inner_data:
                 total_value += inner_data['value']
         total_values[outer_key] = total_value
-    print(total_values)
     for dimension,score in chief_virtues_score.items():
         total_values[int(dimension)] += score
     
-
+    
     result_dict = {item["id"]: item["value"] for sublist in level2_scores for item in sublist}
     percentage_dict = {key: (value / 94 * 100) for key, value in total_values.items()}
 
-    print(sorted([(get_feature_name_by_id(i),j) for i,j in percentage_dict.items()]))
-    # print(result_dict,0000000000000)
+    result_list = []
 
+    for i,key in enumerate(result_dict.keys()):
+        feature_name = get_feature_name_by_id(key)
+        average_value = (result_dict[key] + percentage_dict[key]) / 2
 
+        if 0 <= i <= 2:
+            attribute_name = 'level3_power'
+        elif 3 <= i <= 5:
+            attribute_name = 'level3_push'
+        elif 6 <= i <= 8:
+            attribute_name = 'level3_pain'
+        else:
+            attribute_name = None  # Handle this case based on your requirements
+
+        virtue = get_virtue_object_by_dimmension_id(key)
+        virtue_info = (virtue.virtue, chief_virtues_score[str(key)]*100/36,getattr(virtue, attribute_name))
+
+        traits_info =  sorted(
+                    [( v['name'],v['value']*100/26,v['statements_dict'][attribute_name]) for k, v in dimensions[key].items()],
+                    key=lambda x: x[1], 
+                    reverse=True  
+                )
+        result_list.append(
+            (
+              feature_name,average_value,virtue_info,traits_info
+            )
+        )
+
+    result_tuple = sorted(result_list, key=lambda x: x[1], reverse=True)
+
+    file_path = Generate_level3_Report(user_profile,result_tuple)
+
+    return file_path
+
+    print(result_tuple[0])
+    # print(sorted([(get_feature_name_by_id(i),(result_dict[i]+percentage_dict[i])/2,dimensions[i]) for i in result_dict.keys()],key=lambda x: x[1],reverse=True)[0])  
     
-    print(sorted([(get_feature_name_by_id(i),(result_dict[i]+percentage_dict[i])/2) for i in result_dict.keys()]))
+    # print(result_dict)
     # print(sorted([f"{j/283*100}-{i}" for i,j in total_values.items()]))
     # print(chief_virtues_score)
     # print(total_values)
@@ -69,14 +106,15 @@ def process_level3_career_report(user_id,user_profile):
 
 
 
-    for i,group in enumerate(groups):
-        buckets = group.level3_buckets.all()
-        temp = set()
-        for bucket in buckets:
-            temp.add(bucket.id)
+    # for i,group in enumerate(groups):
+    #     buckets = group.level3_buckets.all()
+    #     temp = set()
+    #     for bucket in buckets:
+    #         temp.add(bucket.id)
 
-        groups[i] = temp
+    #     groups[i] = temp
 
+    # print(groups)
     # print
     # print(dimensions)
     # print(groups)

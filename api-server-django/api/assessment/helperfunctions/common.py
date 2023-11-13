@@ -9,6 +9,17 @@ def get_feature_name_by_id(feature_id):
     except Bucket.DoesNotExist:
         return None
 
+
+
+def get_virtue_object_by_dimmension_id(dimmension_id):
+    try:
+        bucket = Bucket.objects.get(id=dimmension_id)
+        return bucket.virtue
+    except Bucket.DoesNotExist:
+        return None
+
+
+
 def generate_report(file_path):
     if os.path.exists(file_path):
         with open(file_path, 'rb') as file:
