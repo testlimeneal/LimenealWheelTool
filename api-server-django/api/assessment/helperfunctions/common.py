@@ -1,6 +1,6 @@
 import os
 from django.http import HttpResponse
-from api.assessment.models import Bucket
+from api.assessment.models import Bucket, Job
 
 def get_feature_name_by_id(feature_id):
     try:
@@ -8,6 +8,17 @@ def get_feature_name_by_id(feature_id):
         return bucket.feature
     except Bucket.DoesNotExist:
         return None
+
+
+def get_careers_from_dimmensions(dimmensions,count = 5):
+    top_jobs = Job.objects.filter(
+        lwdimension_field1__feature=dimmensions[0],
+        lwdimension_field2__feature=dimmensions[1],
+        lwdimension_field3__feature=dimmensions[2]
+    )[0:count]
+
+    return top_jobs
+        
 
 
 

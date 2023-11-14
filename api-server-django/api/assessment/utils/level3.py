@@ -14,6 +14,7 @@ import numpy as np
 import excel2img
 import img2pdf
 from api.constants import API_DIR
+from api.assessment.helperfunctions.common import get_careers_from_dimmensions
 
 
 activities_path = os.path.join(API_DIR, "assessment","assets","level2", 'dimmensions')
@@ -72,6 +73,8 @@ def Generate_level3_Report(user_profile,data):
     generate_user_pie_chart(user_dimmensions[0:3],new_folder_path)
     job_info = generate_jobs_pie_chart(new_folder_path,user_profile,count=5)
 
+    
+    
 
     excel = insert_image_into_excel(worksheet_name='Data',data=data)
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page2',data=user_dimmensions[0:2])
@@ -86,6 +89,7 @@ def Generate_level3_Report(user_profile,data):
     
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page10',data=user_dimmensions[0:6])
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page11',data=user_dimmensions[6:9])
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page12',data=data)
 
     excel.save(os.path.join(new_folder_path, "level3report.xlsx"))
 
@@ -315,14 +319,56 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         add_image_to_worksheet(worksheet,assets_folder,f"{data[3].lower()}.png",45,2,330,450)
         add_image_to_worksheet(worksheet,assets_folder,f"{data[4].lower()}.png",45,7,330,450)
         add_image_to_worksheet(worksheet,assets_folder,f"{data[5].lower()}.png",45,11,330,450)
-    
+        
+        replacements = {}
+        
+        power_careers = get_careers_from_dimmensions(data[0:3])
+        push_careers = get_careers_from_dimmensions(data[3:6])
+
+        for count,job in enumerate(power_careers):
+            replacements[f'B{count+38}'] = job.title
+
+        for count,job in enumerate(push_careers):
+            replacements[f'B{count+70}'] = job.title
+
+        update_worksheet_cells(worksheet,replacements)
+       
+        # for i in enumerate
 
     elif worksheet_name == 'Page11': 
         add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",13,2,330,450)
         add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",13,7,330,450)
         add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",13,11,330,450)
 
-    
+        replacements = {}
+
+        pain_careers = get_careers_from_dimmensions(data[0:3])
+
+        for count,job in enumerate(pain_careers):
+            replacements[f'B{count+38}'] = job.title
+        
+        update_worksheet_cells(worksheet,replacements)
+        
+
+    elif worksheet_name == 'Page12':
+        replacements = {}
+        rows = {
+            "Binder":"V4",
+            "Charmer":"V5",
+            "Dominion":"V6",
+            "Angel":"V7",
+            "Mentor":"V8",
+            "Principal":"V9",
+            "Guardian":"V10",
+            "Harmonizer":"V11",
+            "Visualizer":"V12",
+        }
+
+        for feature in data:
+            replacements[rows[feature[0]]] = feature[1]
+
+        update_worksheet_cells(worksheet,replacements)
+        
     return workbook
 
 def convert_excel_to_pdf(folder_path, type, excel_filename="level3report.xlsx", num_pages=13, page_prefix="Page"):
