@@ -15,7 +15,7 @@ function Step2(props) {
     const [columns, setColumns] = useState({ requested: { items: [] } });
     // const radioGroupRef = useRef(null);
     const [selectedValue, setSelectedValue] = React.useState(''); // You can set an initial value if needed
-
+    const [loading, setLoading] = useState(false);
     const account = useSelector((state) => state.account);
     const [activeQuestion, setActiveQuestion] = React.useState(0);
     const [questions, setQuestions] = React.useState([]);
@@ -84,6 +84,8 @@ function Step2(props) {
     }
 
     useEffect(() => {
+        // setLoading(true);
+
         setAllowNext(columns['requested']['items'].length !== 0);
         console.log(selectedValue);
         if (activeQuestion > 2 && selectedValue === '') {
@@ -99,6 +101,7 @@ function Step2(props) {
         // });
         // console.log(res)
 
+       
         if (activeQuestion === 0) {
             res = await axios.get(`${configData.API_SERVER}assessment/quiz2`, {
                 headers: { Authorization: `${account.token}` }
@@ -139,6 +142,7 @@ function Step2(props) {
     };
 
     const handleNext = () => {
+
         const questionId = questions[activeQuestion]['id'];
         const quizId = questions[activeQuestion]['quiz'];
         const negation = questions[activeQuestion]['negation']
@@ -154,6 +158,8 @@ function Step2(props) {
             7: 7,
             8: 7
         }
+
+        setLoading(true)
 
         if ([0, 1, 2].includes(activeQuestion)) {
             const addToRankings = (items, rankOffset) => {
@@ -208,7 +214,7 @@ function Step2(props) {
                 setActiveQuestion((prevActiveStep) => prevActiveStep + 1);
             }
         })();
-        
+        setLoading(false)
         (function scroll() {
             const c = document.documentElement.scrollTop || document.body.scrollTop;
             if (c > 0) {
@@ -256,8 +262,12 @@ function Step2(props) {
                 position="static"
                 activeStep={activeQuestion}
                 nextButton={
-                    <Button size="small" onClick={handleNext} disabled={allowNext}>
-                        {activeQuestion + 1 === questions.length ? 'Complete' : 'Next'}
+                    <Button size="small" onClick={handleNext} disabled={allowNext || loading}>
+                        {activeQuestion + 1 === questions.length ? (
+                            loading ? 'Loading...' : 'Complete'
+                        ) : (
+                            loading ? 'Loading...' : 'Next'
+                        )}
                         {activeQuestion + 1 === questions.length ? null : <KeyboardArrowRight />}
                     </Button>
                 }

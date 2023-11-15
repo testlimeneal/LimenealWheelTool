@@ -2,7 +2,7 @@ import os
 import uuid
 from openpyxl import load_workbook
 from openpyxl.drawing.image import Image
-from api.assessment.constants import ROLES, COLOR_MAPPING
+from api.assessment.constants import ROLES, COLOR_MAPPING, LEVEL3_ROLES
 
 from api.assessment.utils.common import generate_user_pie_chart,generate_jobs_pie_chart
 import matplotlib
@@ -331,6 +331,17 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         for count,job in enumerate(push_careers):
             replacements[f'B{count+70}'] = job.title
 
+        top_three_labels = [i for i in data[0:3]]
+        top_three_roles = [LEVEL3_ROLES[i.lower()] for i in top_three_labels]
+
+        middle_three_labels = [i for i in data[3:6]]
+        middle_three_roles = [LEVEL3_ROLES[i.lower()] for i in middle_three_labels]
+
+        power_sentence = f"Strong in {', '.join(top_three_labels[:-1])}, and {top_three_labels[-1]}, careers where you will find complete fulfilment will be where the inclination is to  {', '.join(top_three_roles[:-1])}, and {top_three_roles[-1]}"
+        push_sentence = f"Strong in {', '.join(middle_three_labels[:-1])}, and {middle_three_labels[-1]}, careers where you will find moderate fulfilment will be where the inclination is to  {', '.join(middle_three_roles[:-1])}, and {middle_three_roles[-1]}"
+      
+        replacements['B33'] = power_sentence
+        replacements['B65'] = push_sentence
         update_worksheet_cells(worksheet,replacements)
        
         # for i in enumerate
@@ -346,6 +357,13 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
 
         for count,job in enumerate(pain_careers):
             replacements[f'B{count+38}'] = job.title
+        
+        bottom_three_labels = [i for i in data[0:3]]
+        bottom_three_roles = [LEVEL3_ROLES[i.lower()] for i in bottom_three_labels]
+
+        pain_sentence = f"Strong in {', '.join(bottom_three_labels[:-1])}, and {bottom_three_labels[-1]}, careers where you will find least fulfilment will be where the inclination is to  {', '.join(bottom_three_roles[:-1])}, and {bottom_three_roles[-1]}"
+
+        replacements['B33'] = pain_sentence
         
         update_worksheet_cells(worksheet,replacements)
         
@@ -366,7 +384,9 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
 
         for feature in data:
             replacements[rows[feature[0]]] = feature[1]
+        
 
+         
         update_worksheet_cells(worksheet,replacements)
         
     return workbook

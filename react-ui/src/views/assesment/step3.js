@@ -10,12 +10,12 @@ import Level3Bucket from '../../ui-component/bucket/level3';
 let res = {};
 let question_rankings = [];
 
-function Step2(props) {
-    const {setActiveSteps} = props
+function Step3(props) {
+    const { setActiveSteps } = props;
     const [columns, setColumns] = useState({ requested: { items: [] } });
     // const radioGroupRef = useRef(null);
     const [selectedValue, setSelectedValue] = React.useState(''); // You can set an initial value if needed
-
+    const [loading, setLoading] = useState(false);
     const account = useSelector((state) => state.account);
     const [activeStep, setActiveStep] = React.useState(0);
     const [questions, setQuestions] = React.useState([]);
@@ -28,8 +28,12 @@ function Step2(props) {
         if (!result.destination) return;
         const { source, destination } = result;
 
-        console.log(source,destination)
-        if (source.droppableId !== destination.droppableId && ((destination.droppableId === 'requested') || (source.droppableId === 'requested' && columns[destination.droppableId].items.length < 9))) {
+        console.log(source, destination);
+        if (
+            source.droppableId !== destination.droppableId &&
+            (destination.droppableId === 'requested' ||
+                (source.droppableId === 'requested' && columns[destination.droppableId].items.length < 9))
+        ) {
             const sourceColumn = columns[source.droppableId];
             const destColumn = columns[destination.droppableId];
             const sourceItems = [...sourceColumn.items];
@@ -72,25 +76,20 @@ function Step2(props) {
 
     useEffect(() => {
         setAllowNext(columns['requested']['items'].length !== 0);
-        console.log(selectedValue)
+        console.log(selectedValue);
         if (activeStep > 2 && selectedValue === '') {
-            setAllowNext(true)
-        } else if(activeStep > 2 && selectedValue.length>0) {
-          setAllowNext(false)
+            setAllowNext(true);
+        } else if (activeStep > 2 && selectedValue.length > 0) {
+            setAllowNext(false);
         }
-    }, [columns,selectedValue]);
+    }, [columns, selectedValue]);
 
     useEffect(async () => {
-
-
         if (activeStep === 0) {
             res = await axios.get(`${configData.API_SERVER}assessment/level3`, {
                 headers: { Authorization: `${account.token}` }
             });
         }
-        
-
-
 
         setQuestions(res.data);
         const taskStatus = {
@@ -99,7 +98,7 @@ function Step2(props) {
                 items: res.data[activeStep]['associated_traits'].map(({ ...e }) => ({
                     ...e,
                     id: e.id.toString(),
-                    text: e.name,
+                    text: e.name
                     // text:'hello'
                 }))
             },
@@ -120,7 +119,7 @@ function Step2(props) {
         // console.log(tas)
         setColumns(taskStatus);
 
-        console.log(question_rankings)
+        console.log(question_rankings);
     }, [activeStep]);
 
     const handleRadioChange = (event) => {
@@ -130,7 +129,7 @@ function Step2(props) {
     const handleNext = () => {
         const questionId = questions[activeStep]['id'];
         const quizId = questions[activeStep]['quiz'];
-        const negation = questions[activeStep]['negation']
+        const negation = questions[activeStep]['negation'];
 
         const mapping = {
             0: 9,
@@ -142,9 +141,10 @@ function Step2(props) {
             6: 7,
             7: 7,
             8: 7
-        }
+        };
+        setLoading(true);
 
-        if ([0, 1,2].includes(activeStep)) {
+        if ([0, 1, 2].includes(activeStep)) {
             const addToRankings = (items, rankOffset) => {
                 items.forEach((option, index) => {
                     question_rankings.push({
@@ -163,9 +163,6 @@ function Step2(props) {
             // question_rankings.push(rankings);
 
             console.log(question_rankings);
-
-
-
         } else {
             // const selectedValue = radioGroupRef.current.value;
             // console.log(radioGroupRef.current); // This will log the selected value
@@ -181,32 +178,32 @@ function Step2(props) {
 
         // console.log(questions.length,activeStep+1)
         (async () => {
-          if (questions.length === activeStep + 1) {
-            try {
-              const response = await axios.post(`${configData.API_SERVER}assessment/level3response`,question_rankings,   {
-                headers: { Authorization: `${account.token}` }
-              });
-              setActiveSteps(3)
-              // Handle the response data here
-              console.log(response.data); // Example: log the response data
-              
-            } catch (error) {
-              console.error("Error fetching data:", error);
-              // Handle the error here
+            if (questions.length === activeStep + 1) {
+                try {
+                    const response = await axios.post(`${configData.API_SERVER}assessment/level3response`, question_rankings, {
+                        headers: { Authorization: `${account.token}` }
+                    });
+                    setActiveSteps(3);
+                    // Handle the response data here
+                    console.log(response.data); // Example: log the response data
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    // Handle the error here
+                }
             }
-          }
         })();
+        setLoading(false);
         if (!(questions.length === activeStep + 1)) {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
         }
     };
 
-    console.log(optionsColumns)
+    console.log(optionsColumns);
     return (
         <div style={{ width: '100%', margin: '2rem 0' }}>
             <Typography variant="h3" margin={'auto'} textAlign={'center'} fontWeight={100} gutterBottom>
-                
-                {activeStep > 2 ? "When you" : ''} {questions && questions.length && questions[activeStep]['text']} {activeStep > 2 ? "do you..." : ''}
+                {activeStep > 2 ? 'When you' : ''} {questions && questions.length && questions[activeStep]['text']}{' '}
+                {activeStep > 2 ? 'do you...' : ''}
             </Typography>
             {console.log(questions[activeStep])}
 
@@ -234,20 +231,15 @@ function Step2(props) {
                 </FormControl>
             )}
 
-           
             <MobileStepper
                 variant="text"
                 steps={3}
                 position="static"
                 activeStep={activeStep}
                 nextButton={
-                    <Button
-                        size="small"
-                        onClick={handleNext}
-                        disabled={allowNext}
-                    >
-                        Next
-                        <KeyboardArrowRight />
+                    <Button size="small" onClick={handleNext} disabled={allowNext || loading}>
+                        {activeStep + 1 === questions.length ? (loading ? 'Loading...' : 'Complete') : loading ? 'Loading...' : 'Next'}
+                        {activeStep + 1 === questions.length ? null : <KeyboardArrowRight />}
                     </Button>
                 }
             />
@@ -255,4 +247,4 @@ function Step2(props) {
     );
 }
 
-export default Step2;
+export default Step3;

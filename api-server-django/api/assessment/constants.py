@@ -21,3 +21,15 @@ ROLES = {
     'charmer': "Influencing Others",
     'dominion': "Achieving Despite Challenges"
 }
+
+LEVEL3_ROLES = {
+    'harmonizer': "create and enable a harmony in the environment",
+    'visualizer': "create something new and find possibilities",
+    'binder': "bond and nurture relationships is of high significance",
+    'guardian': "plan by defining standard guidelines",
+    'mentor': "guide others",
+    'principal': "research and investigate and diagnose facts rationally",
+    'angel': "serve others",
+    'charmer': "create a charming influence and leave an everlasting impact",
+    'dominion': "achieve tough to difficult goals in presence of undaunted risks and challenges "
+}

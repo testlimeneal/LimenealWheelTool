@@ -17,7 +17,7 @@ let res = [];
 
 export default function HorizontalLinearAlternativeLabelStepper() {
     const [activeSteps, setActiveSteps] = React.useState(0);
-
+    const [isLoading, setIsLoading] = React.useState(false);
     const [data, setData] = React.useState([]);
     const [quizID, setQuizId] = React.useState('');
     const [disabled, setDisabled] = React.useState(true);
@@ -46,6 +46,7 @@ export default function HorizontalLinearAlternativeLabelStepper() {
     const [activeQuestion, setActiveQuestion] = React.useState(0);
 
     const handleNext = () => {
+        setIsLoading(true);
         (function scroll() {
 
             const c = document.documentElement.scrollTop || document.body.scrollTop;
@@ -59,11 +60,15 @@ export default function HorizontalLinearAlternativeLabelStepper() {
         // console.log(data[activeQuestion])
         console.log(data[activeQuestion]?.ranking);
         res.push(data[activeQuestion]?.ranking);
+        
         setActiveQuestion((prevActiveStep) => prevActiveStep + 1);
+        
         setDisabled(true);
+        setIsLoading(false);
     };
 
     const handleComplete = async () => {
+        setIsLoading(true);
         res.push(data[activeQuestion]?.ranking);
         const transformedArray = [];
         console.log(res);
@@ -85,7 +90,7 @@ export default function HorizontalLinearAlternativeLabelStepper() {
         await axios.post(`${configData.API_SERVER}assessment/userresponses/`, transformedArray, {
             headers: { Authorization: `${account.token}` }
         });
-
+        setIsLoading(false);
         setActiveSteps(1);
     };
     const handleStep = (step) => () => {
@@ -120,7 +125,6 @@ export default function HorizontalLinearAlternativeLabelStepper() {
 
                 {isRegistered  && (
                     <Box>
-                        {console.log("heeeeeee")}
                         <Box>
                             <Stepper activeStep={activeSteps}>
                                 {[1, 2, 3].map((label, index) => (
@@ -140,17 +144,30 @@ export default function HorizontalLinearAlternativeLabelStepper() {
                                 sx={{ width: '70%', margin: 'auto', flexGrow: 1 }}
                                 nextButton={
                                     activeQuestion === data.length - 1 ? (
-                                        <Button size="small" onClick={handleComplete} disabled={disabled}>
-                                            Complete
-                                            <KeyboardArrowRight />
-                                        </Button>
+                                        isLoading ? (
+                                            <Button size="small" disabled>
+                                                Loading...
+                                            </Button>
+                                        ) : (
+                                            <Button size="small" onClick={handleComplete} disabled={disabled}>
+                                                Complete
+                                                <KeyboardArrowRight />
+                                            </Button>
+                                        )
                                     ) : (
-                                        <Button size="small" onClick={handleNext} disabled={disabled || activeQuestion === data.length - 1}>
-                                            Next
-                                            <KeyboardArrowRight />
-                                        </Button>
+                                        isLoading ? (
+                                            <Button size="small" disabled>
+                                                Loading...
+                                            </Button>
+                                        ) : (
+                                            <Button size="small" onClick={handleNext} disabled={disabled || activeQuestion === data.length - 1}>
+                                                Next
+                                                <KeyboardArrowRight />
+                                            </Button>
+                                        )
                                     )
                                 }
+                                
                             />
                         ) : null}
                     </Box>

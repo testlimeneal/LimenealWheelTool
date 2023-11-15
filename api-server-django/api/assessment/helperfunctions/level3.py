@@ -57,7 +57,10 @@ def process_level3_career_report(user_id,user_profile):
 
     result_list = []
 
-    for i,key in enumerate(result_dict.keys()):
+    sorted_keys = sorted(result_dict.keys(), key=lambda key: (result_dict[key] + percentage_dict[key]) / 2,reverse=True)
+
+
+    for i,key in enumerate(sorted_keys):
         feature_name = get_feature_name_by_id(key)
         average_value = (result_dict[key] + percentage_dict[key]) / 2
 
@@ -66,10 +69,9 @@ def process_level3_career_report(user_id,user_profile):
         elif 3 <= i <= 5:
             attribute_name = 'level3_push'
         elif 6 <= i <= 8:
-            attribute_name = 'level3_pain'
-        else:
-            attribute_name = None  # Handle this case based on your requirements
+            attribute_name = 'level3_pain' 
 
+        
         virtue = get_virtue_object_by_dimmension_id(key)
         virtue_info = (virtue.virtue, chief_virtues_score[str(key)]*100/36,getattr(virtue, attribute_name))
 
@@ -85,7 +87,6 @@ def process_level3_career_report(user_id,user_profile):
         )
 
     result_tuple = sorted(result_list, key=lambda x: x[1], reverse=True)
-
     file_path = Generate_level3_Report(user_profile,result_tuple)
 
     return file_path
