@@ -1,12 +1,13 @@
-from api.assessment.models import  Level3Response,Level3Group
-from api.assessment.utils.level1 import Generate_level1_Report
-from api.assessment.utils.level2 import Generate_level2_Report
+from api.assessment.models import  Level3Response,Level3Group,UserProfile
 from api.assessment.utils.level3 import Generate_level3_Report
 from api.assessment.helperfunctions.common import get_feature_name_by_id,get_virtue_object_by_dimmension_id
+from api.assessment.helperfunctions.level2 import process_level2_scores
 
-
-def process_level3_career_report(user_id,user_profile):
+def process_level3_scores(user_id):
     responses = Level3Response.objects.filter(user=user_id)
+    user_profile = UserProfile.objects.get(user=user_id)
+    if not user_profile.level2:
+        user_profile = process_level2_scores(user_id)[-1]
     groups = list(Level3Group.objects.all())
     dimensions = dict()
 
@@ -28,8 +29,6 @@ def process_level3_career_report(user_id,user_profile):
             }
         dimension_dict[answer_id]['value'] += response.rank
     
-    # print(dimensions)
-    # print(dimensions)
     level1_scores = dict(user_profile.level1.items())
     chief_virtues_score = {
         key: level1_scores[key] - level1_scores['bucket'][key]
@@ -41,7 +40,6 @@ def process_level3_career_report(user_id,user_profile):
     
 
     total_values = {}
-    # print(dimensions)
     for outer_key, inner_dict in dimensions.items():
         total_value = 0
         for inner_key, inner_data in inner_dict.items():
@@ -73,7 +71,8 @@ def process_level3_career_report(user_id,user_profile):
 
         
         virtue = get_virtue_object_by_dimmension_id(key)
-        virtue_info = (virtue.virtue, chief_virtues_score[str(key)]*100/36,getattr(virtue, attribute_name))
+        print(chief_virtues_score)
+        virtue_info = (virtue.virtue, chief_virtues_score[key]*100/36,getattr(virtue, attribute_name))
 
         traits_info =  sorted(
                     [( v['name'],v['value']*100/26,v['statements_dict'][attribute_name]) for k, v in dimensions[key].items()],
@@ -87,47 +86,15 @@ def process_level3_career_report(user_id,user_profile):
         )
 
     result_tuple = sorted(result_list, key=lambda x: x[1], reverse=True)
+
+    return user_profile,result_tuple
+
+def process_level3_career_report(user_id,report_id):
+
+    user_profile,result_tuple = process_level3_scores(user_id)
+    
     file_path = Generate_level3_Report(user_profile,result_tuple)
+    user_profile.file_paths[report_id] = file_path
+    user_profile.save()
 
     return file_path
-
-    print(result_tuple[0])
-    # print(sorted([(get_feature_name_by_id(i),(result_dict[i]+percentage_dict[i])/2,dimensions[i]) for i in result_dict.keys()],key=lambda x: x[1],reverse=True)[0])  
-    
-    # print(result_dict)
-    # print(sorted([f"{j/283*100}-{i}" for i,j in total_values.items()]))
-    # print(chief_virtues_score)
-    # print(total_values)
-
-    # print(dimensions)   
-    # print(level2_scores) 
-    # for j in level2_scores[0]:
-    #     print(j['id'],j['name'],j['value'])
-    #     print(dimensions[j['id']])
-
-
-
-    # for i,group in enumerate(groups):
-    #     buckets = group.level3_buckets.all()
-    #     temp = set()
-    #     for bucket in buckets:
-    #         temp.add(bucket.id)
-
-    #     groups[i] = temp
-
-    # print(groups)
-    # print
-    # print(dimensions)
-    # print(groups)
-            # break
-    # print(list(groups))
-    # print(dimensions,virtues)
-
-
-
-    # file_path = Generate_level2_Report(dimmensions_data,nlp_data,bucket_instances)
-    
-    # level2_data = {"value":dimmensions_data,"file_path" : file_path}
-    # user_profile.level2 = level2_data
-    # user_profile.save()
-    # return file_path

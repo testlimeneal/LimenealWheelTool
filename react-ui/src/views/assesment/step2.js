@@ -11,13 +11,13 @@ let res = {};
 let question_rankings = [];
 
 function Step2(props) {
-    const { setActiveSteps } = props;
+    const { setActiveLevel } = props;
     const [columns, setColumns] = useState({ requested: { items: [] } });
     // const radioGroupRef = useRef(null);
     const [selectedValue, setSelectedValue] = React.useState(''); // You can set an initial value if needed
     const [loading, setLoading] = useState(false);
     const account = useSelector((state) => state.account);
-    const [activeQuestion, setActiveQuestion] = React.useState(0);
+    const [activeQuestion, setActiveQuestion] = React.useState(2);
     const [questions, setQuestions] = React.useState([]);
     const [allowNext, setAllowNext] = React.useState(false);
 
@@ -28,7 +28,6 @@ function Step2(props) {
         if (!result.destination) return;
         const { source, destination } = result;
 
-        console.log(source, destination);
         if (
             source.droppableId !== destination.droppableId &&
             (destination.droppableId === 'requested' ||
@@ -87,7 +86,6 @@ function Step2(props) {
         // setLoading(true);
 
         setAllowNext(columns['requested']['items'].length !== 0);
-        console.log(selectedValue);
         if (activeQuestion > 2 && selectedValue === '') {
             setAllowNext(true);
         } else if (activeQuestion > 2 && selectedValue.length > 0) {
@@ -102,7 +100,7 @@ function Step2(props) {
         // console.log(res)
 
        
-        if (activeQuestion === 0) {
+        if (activeQuestion === 2) {
             res = await axios.get(`${configData.API_SERVER}assessment/quiz2`, {
                 headers: { Authorization: `${account.token}` }
             });
@@ -133,8 +131,6 @@ function Step2(props) {
         };
 
         setColumns(taskStatus);
-
-        console.log(question_rankings);
     }, [activeQuestion]);
 
     const handleRadioChange = (event) => {
@@ -179,11 +175,9 @@ function Step2(props) {
 
             // question_rankings.push(rankings);
 
-            console.log(question_rankings);
         } else {
             // const selectedValue = radioGroupRef.current.value;
             // console.log(radioGroupRef.current); // This will log the selected value
-            console.log(selectedValue);
             setSelectedValue('');
             question_rankings.push({
                 question: questionId,
@@ -201,7 +195,7 @@ function Step2(props) {
                         headers: { Authorization: `${account.token}` }
                     });
 
-                    setActiveSteps(2);
+                    setActiveLevel(2);
                     // Handle the response data here
                     console.log(response.data);
                     return

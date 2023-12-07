@@ -21,6 +21,7 @@ assets_folder = os.path.join(API_DIR, "assessment","assets","level1")
 
 emotions_path = os.path.join(API_DIR, "assessment","assets","level2", 'emotions')
 virtues_path = os.path.join(API_DIR, "assessment","assets","level2", 'virtues')
+graphics_path = os.path.join(API_DIR, "assessment","assets","level2", 'graphics')
 
 
 def find_index_of_dimmension(data, target_name):
@@ -143,12 +144,12 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
 
 
         sr_no = 22
-        cell_row = ['B27', 'C27', 'G27','B42', 'C42', 'G42']
+        cell_row = ['B48', 'G48', 'L48','B74', 'G74', 'L74']
         for sublist in data:
             for item in sublist:
                 # print(item)
-                replacements[f"L{sr_no}"] = item['name']
-                replacements[f"M{sr_no}"] = round(item['value'])
+                replacements[f"T{sr_no}"] = item['name']
+                replacements[f"U{sr_no}"] = round(item['value'])
                 if sr_no-22 < 6:
                     replacements[cell_row[sr_no-22]] = ROLES[item['name'].lower()]
                 sr_no = sr_no + 1
@@ -160,11 +161,11 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
 
         res_data,nlp_data = data
 
-        cell_row = ['B18','C18','G18']
+        cell_row = ['B31','G31','L31']
         for i in range(3):
             replacements[cell_row[i]] = ROLES[res_data[i]['name'].lower()]
         
-        cell_row = [('B27','B29','B34','B35'),('B40','B42','B47','B48')]
+        cell_row = [('B43','B45','B51','B53'),('B62','B64','B70','B72')]
         for i,j in enumerate(nlp_data):
             replacements[cell_row[i][0]] = j['name'] 
             replacements[cell_row[i][1]] = j['statement'] 
@@ -178,32 +179,32 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         bucket_id = bucket['id']
         feature_data = details[bucket_id]
 
-        b35_cell = worksheet['B35'].value.replace('input_emotion',feature_data['emotion']).replace('input_color',feature_data['colour'])
+        b70_cell = worksheet['B70'].value.replace('input_emotion',feature_data['emotion']).replace('input_color',feature_data['colour'])
 
         replacements = {
-            'B12': bucket['name'],
-            'G10' : feature_data[f'{type}_motivation'],
-            'B30' : feature_data['motivation'],
-            'B33' : ['input_dimmension',bucket['name']],
-            'B34' : ['input_dimmension',bucket['name']],
-            'B35' : b35_cell,
-            'C39' : ['input_virtue',feature_data['virtue']],
-            'C40': feature_data[f'{type}_virtue']
+            'B24': bucket['name'],
+            'B30' : feature_data[f'{type}_motivation'],
+            'B64' : feature_data['motivation'],
+            'B67' : ['input_dimmension',bucket['name']],
+            'B69' : ['input_dimmension',bucket['name']],
+            'B70' : b70_cell,
+            'B72' : ['input_virtue',feature_data['virtue']],
+            'B74': feature_data[f'{type}_virtue']
         }
 
         for i,j in enumerate(feature_data['purpose_statements'].split('\n')):
-            replacements[f"B{16+i}"] = j
+            replacements[f"B{40+i*2}"] = j
 
         for i,j in enumerate(feature_data['passion_statements'].split('\n')):
-            replacements[f"G{16+i}"] = j
+            replacements[f"J{40+i*2}"] = j
 
         for i,j in enumerate(dict(sorted(bucket['activities'].items(), key=lambda item: item[1], reverse=True)).keys()):
-            replacements[f'B{24+i}'] = j 
+            replacements[f'B{55+i*2}'] = j 
 
-        add_image_to_worksheet(worksheet,assets_folder,f"{bucket['name']}.png",7,4,250,325)
-        add_image_to_worksheet(worksheet,activities_path,f"{bucket['name']}.png",23,6,120,120)
-        add_image_to_worksheet(worksheet,emotions_path,f"{bucket['name']}.png",34,7,120,120)
-        add_image_to_worksheet(worksheet,virtues_path,f"{bucket['name']}.png",38,2,120,120)
+        add_image_to_worksheet(worksheet,graphics_path,f"{bucket['name']}.png",50,12,390,560)
+        # add_image_to_worksheet(worksheet,activities_path,f"{bucket['name']}.png",23,6,120,120)
+        # add_image_to_worksheet(worksheet,emotions_path,f"{bucket['name']}.png",34,7,120,120)
+        # add_image_to_worksheet(worksheet,virtues_path,f"{bucket['name']}.png",38,2,120,120)
 
         update_worksheet_cells(worksheet,replacements)
 
@@ -211,29 +212,34 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         bucket,details,type = data
         bucket_id = bucket['id']
         feature_data = details[bucket_id]
-        b33_cell = worksheet['B33'].value.replace('input_emotion',feature_data['emotion']).replace('input_color',feature_data['colour'])
+
+        b70_cell = worksheet['B70'].value.replace('input_emotion',feature_data['emotion']).replace('input_color',feature_data['colour'])
+
         replacements = {
-            'B8': bucket['name'],
-            'G7' : feature_data[f'{type}_motivation'],
-            'B28' : feature_data['motivation'],
-            'B31' : ['input_dimmension',bucket['name']],
-            'B32' : ['input_dimmension',bucket['name']],
-            'B33' : b33_cell,
-            'C37': feature_data[f'{type}_virtue'],
-            'C36' : ['input_virtue',feature_data['virtue']],
+            'B24': bucket['name'],
+            'B30' : feature_data[f'{type}_motivation'],
+            'B64' : feature_data['motivation'],
+            'B67' : ['input_dimmension',bucket['name']],
+            'B69' : ['input_dimmension',bucket['name']],
+            'B70' : b70_cell,
+            'B72' : ['input_virtue',feature_data['virtue']],
+            'B74': feature_data[f'{type}_virtue']
         }
+
         for i,j in enumerate(feature_data['purpose_statements'].split('\n')):
-            replacements[f"B{13+i}"] = j
+            replacements[f"B{40+i*2}"] = j
+
         for i,j in enumerate(feature_data['passion_statements'].split('\n')):
-            replacements[f"G{13+i}"] = j
+            replacements[f"J{40+i*2}"] = j
 
         for i,j in enumerate(dict(sorted(bucket['activities'].items(), key=lambda item: item[1], reverse=True)).keys()):
-            replacements[f'B{21+i}'] = j 
-
-        add_image_to_worksheet(worksheet,assets_folder,f"{bucket['name']}.png",4,4,250,325)
-        add_image_to_worksheet(worksheet,activities_path,f"{bucket['name']}.png",20,6,120,120)
-        add_image_to_worksheet(worksheet,emotions_path,f"{bucket['name']}.png",30,7,120,120)
-        add_image_to_worksheet(worksheet,virtues_path,f"{bucket['name']}.png",35,2,120,120)
+            replacements[f'B{55+i*2}'] = j 
+        
+        add_image_to_worksheet(worksheet,graphics_path,f"{bucket['name']}.png",50,12,390,560)
+        # add_image_to_worksheet(worksheet,assets_folder,f"{bucket['name']}.png",7,4,250,325)
+        # add_image_to_worksheet(worksheet,activities_path,f"{bucket['name']}.png",23,6,120,120)
+        # add_image_to_worksheet(worksheet,emotions_path,f"{bucket['name']}.png",34,7,120,120)
+        # add_image_to_worksheet(worksheet,virtues_path,f"{bucket['name']}.png",38,2,120,120)
 
         update_worksheet_cells(worksheet,replacements)
 
@@ -244,24 +250,24 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
 
 
         replacements = {
-            'B12': bucket['name'],
-            'G10' : feature_data[f'{type}_motivation'],
-            'C31' : ['input_virtue',feature_data['virtue']],
-            'C32': feature_data[f'{type}_virtue']
+            'B24': bucket['name'],
+            'B30' : feature_data[f'{type}_motivation'],
+            'B64' : ['input_virtue',feature_data['virtue']],
+            'B66': feature_data[f'{type}_virtue']
         }
 
         for i,j in enumerate(feature_data['purpose_statements'].split('\n')):
-            replacements[f"B{18+i}"] = j
+            replacements[f"B{40+i*2}"] = j
 
         for i,j in enumerate(feature_data['passion_statements'].split('\n')):
-            replacements[f"G{18+i}"] = j
+            replacements[f"J{40+i*2}"] = j
 
         for i,j in enumerate(dict(sorted(bucket['activities'].items(), key=lambda item: item[1], reverse=True)).keys()):
-            replacements[f'B{26+i}'] = j 
+            replacements[f'B{55+i*2}'] = j 
 
-        add_image_to_worksheet(worksheet,assets_folder,f"{bucket['name']}.png",7,4,250,325)
-        add_image_to_worksheet(worksheet,activities_path,f"{bucket['name']}.png",25,6,120,120)
-        add_image_to_worksheet(worksheet,virtues_path,f"{bucket['name']}.png",30,2,120,120)
+        # add_image_to_worksheet(worksheet,assets_folder,f"{bucket['name']}.png",7,4,250,325)
+        # add_image_to_worksheet(worksheet,activities_path,f"{bucket['name']}.png",25,6,120,120)
+        # add_image_to_worksheet(worksheet,virtues_path,f"{bucket['name']}.png",30,2,120,120)
 
         update_worksheet_cells(worksheet,replacements)
 
@@ -275,43 +281,43 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         generate_user_pie_chart(user_top3_labels,folder_path)
         job_info = generate_jobs_pie_chart(folder_path,user_profile,count=3)
 
-        add_image_to_worksheet(worksheet,folder_path,"job1dimmensions.png",12,2,500,230)
-        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",12,6,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"job1dimmensions.png",22,2,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",22,9,500,230)
         
-        add_image_to_worksheet(worksheet,folder_path,"job2dimmensions.png",32,2,500,230)
-        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",32,6,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"job2dimmensions.png",50,2,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",50,9,500,230)
 
         replacements = {
-            "B11":f"{job_info[0]['job_name']}'s Inclinations",
-            "F11":['user_name',user_profile.name],
-            "B21":['job_name',job_info[0]['job_name']],
-            "F21":['user_name',user_profile.name],
-            "B29":f"{job_info[1]['job_name']}'s Inclinations",
-            "F29":['user_name',user_profile.name],
-            "F43":['user_name',user_profile.name],
-            "B43":['job_name',job_info[1]['job_name']],
+            "B20":f"{job_info[0]['job_name']}'s Inclinations",
+            "J20":['user_name',user_profile.name],
+            "B35":['job_name',job_info[0]['job_name']],
+            "J35":['user_name',user_profile.name],
+            "B48":f"{job_info[1]['job_name']}'s Inclinations",
+            "J48":['user_name',user_profile.name],
+            "B63":['user_name',user_profile.name],
+            "J63":['job_name',job_info[1]['job_name']],
         }
 
-        for i in range(23, 26):
-            field_key = f"lwdimension_field{i - 22}"
+        for i in range(38, 45,3):
+            field_key = f"lwdimension_field{(i - 38) // 3 + 1}"
             dimension_value = job_info[0][field_key]
 
             replacements[f"B{i}"] = dimension_value
-            replacements[f"C{i}"] = ROLES[dimension_value.lower()]
+            replacements[f"E{i}"] = ROLES[dimension_value.lower()]
 
-            replacements[f"F{i}"] = dimension_value
-            replacements[f"G{i}"] = find_index_of_dimmension(user_data, dimension_value)
+            replacements[f"J{i}"] = dimension_value
+            replacements[f"M{i}"] = find_index_of_dimmension(user_data, dimension_value)
         
         
-        for i in range(45, 48):
-            field_key = f"lwdimension_field{i - 44}"
+        for i in range(66,73,3):
+            field_key = f"lwdimension_field{(i - 66) // 3 + 1}"
             dimension_value = job_info[1][field_key]
 
             replacements[f"B{i}"] = dimension_value
-            replacements[f"C{i}"] = ROLES[dimension_value.lower()]
+            replacements[f"E{i}"] = ROLES[dimension_value.lower()]
 
-            replacements[f"F{i}"] = dimension_value
-            replacements[f"G{i}"] = find_index_of_dimmension(user_data, dimension_value)
+            replacements[f"J{i}"] = dimension_value
+            replacements[f"M{i}"] = find_index_of_dimmension(user_data, dimension_value)
             
         update_worksheet_cells(worksheet,replacements)
 
@@ -324,24 +330,24 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
 
         job_info = generate_jobs_pie_chart(user_profile=user_profile,count=0)
 
-        add_image_to_worksheet(worksheet,folder_path,"job3dimmensions.png",12,2,500,230)
-        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",12,6,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"job3dimmensions.png",31,9,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",47,9,500,230)
 
         replacements = {
-            "B11":f"{job_info[2]['job_name']}'s Inclinations", 
-            "F11":['user_name',user_profile.name],
-            "F21":['user_name',user_profile.name],
-            "B21":['job_name',job_info[2]['job_name']], 
+            "J27":f"{job_info[2]['job_name']}'s Inclinations", 
+            "J45":['user_name',user_profile.name],
+            "B47":['user_name',user_profile.name],
+            "B31":['job_name',job_info[2]['job_name']], 
         }
-        for i in range(23, 26):
-            field_key = f"lwdimension_field{i - 22}"
+        for i in range(34, 41,3):
+            field_key = f"lwdimension_field{(i - 34) // 3 + 1}"
             dimension_value = job_info[2][field_key]
 
             replacements[f"B{i}"] = dimension_value
-            replacements[f"C{i}"] = ROLES[dimension_value.lower()]
+            replacements[f"E{i}"] = ROLES[dimension_value.lower()]
 
-            replacements[f"F{i}"] = dimension_value
-            replacements[f"G{i}"] = find_index_of_dimmension(user_data, dimension_value)
+            replacements[f"B{i+16}"] = dimension_value
+            replacements[f"E{i+16}"] = find_index_of_dimmension(user_data, dimension_value)
         
  
         update_worksheet_cells(worksheet,replacements)
@@ -360,10 +366,10 @@ def convert_excel_to_pdf(folder_path, type, excel_filename="level2report.xlsx", 
         page_name = f"{page_prefix}{page_num}"
         image_name = f"{page_name}.png"
         excel2img.export_img(
-            os.path.join(folder_path,"level2report.xlsx"),
+            os.path.join(folder_path,excel_filename),
             os.path.join(folder_path, image_name),
             page_name,
-            "A1:H53"
+            "A1:Q77"
         )
         image_paths.append(os.path.join(folder_path, image_name))
 

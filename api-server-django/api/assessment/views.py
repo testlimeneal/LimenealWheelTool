@@ -6,11 +6,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
+from api.assessment.helperfunctions.common import   generate_report_file_path,generate_report
 
-from api.assessment.helperfunctions.common import generate_report
-from api.assessment.helperfunctions.level1 import process_level1_career_report
-from api.assessment.helperfunctions.level2 import process_level2_career_report
-from api.assessment.helperfunctions.level3 import process_level3_career_report
 
 
 
@@ -234,25 +231,7 @@ class DownloadReportView(generics.GenericAPIView):
         user_id = request.user.id
         report_id = data['id']
         
-        report = ReportType.objects.get(id=report_id)
-
-        user_profile = UserProfile.objects.get(user=user_id)
-
-        file_path = ''
-        if "Level 1" in report.level and "Career" in report.report_type:
-            if user_profile.level1:
-                file_path = user_profile.level1['file_path']
-                
-            else:
-                file_path = process_level1_career_report(user_id, 1)
-            
-        if "Level 2" in report.level and "Career" in report.report_type:
-            file_path = process_level2_career_report(user_id)
-        
-        if "Level 3" in report.level and "Career" in report.report_type:
-            file_path = process_level3_career_report(user_id,user_profile)
-            
-            
+        file_path = generate_report_file_path(user_id,report_id)
         return generate_report(file_path)
     
 class UserProfileViewSet(viewsets.ModelViewSet):

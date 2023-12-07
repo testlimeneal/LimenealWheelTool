@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import excel2img
 import img2pdf
+from multiprocessing import Pool
 from api.constants import API_DIR
 
 assets_folder = os.path.join(API_DIR, "assessment","assets","level1")
@@ -26,22 +27,18 @@ def add_image_to_worksheet(worksheet, folder_path, image_filename, row, column, 
 def Generate_level1_Report(input_label, input_percentages, inclines,virtues,job_info,user_profile,type='career'):
     
    
-
-    print(inclines)
-    # return
     random_hash = str(uuid.uuid4().hex)
     new_folder_path = create_output_folder(random_hash)
-    # print(type)
     labels = input_label
     percentages = input_percentages
 
     create_horizontal_bar_chart(labels, percentages, new_folder_path)
     create_line_chart(virtues, new_folder_path)
-    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page2', inclines=inclines[0],user_profile=user_profile)
-    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page3', inclines=inclines[1],excel=excel)
-    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page6', inclines=inclines[2],excel=excel)
-    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page4',excel=excel,virtues=virtues)
-    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page5',excel=excel,job_info=job_info,user_profile=user_profile)
+    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page3', inclines=inclines[0],user_profile=user_profile)
+    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page4', inclines=inclines[1],excel=excel)
+    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page5', inclines=inclines[2],excel=excel)
+    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page6',excel=excel,virtues=virtues)
+    excel = insert_image_into_excel(new_folder_path, labels, percentages, worksheet_name='Page7',excel=excel,job_info=job_info,user_profile=user_profile)
     excel.save(os.path.join(new_folder_path, "level1report.xlsx"))
 
     convert_excel_to_pdf(new_folder_path,type)
@@ -67,7 +64,7 @@ def create_output_folder(folder_name):
     return folder_path
 
 def create_horizontal_bar_chart(labels, percentages, folder_path):
-    for k in range(3):
+    for k in range(1):
         fig, ax = plt.subplots(figsize=(60, 20))
         coverted_percentages = [i/72*100 for i in percentages][::-1]
         bar_colors = [(COLOR_MAPPING[label.lower()]) for label in labels]
@@ -78,10 +75,10 @@ def create_horizontal_bar_chart(labels, percentages, folder_path):
             width = bar.get_width() - 5
             ax.text(width, bar.get_y() + bar.get_height() / 2, f'{percentage}', va='center')
 
-            if not i ==2-k:
-                bar.set_alpha(0.1)
-            else:
-                bar.set_alpha(1)
+            # if not i ==2-k:
+            #     bar.set_alpha(0.1)
+            # else:
+            bar.set_alpha(1)
 
         plt.tight_layout()
         
@@ -122,63 +119,56 @@ def insert_image_into_excel(folder_path, labels, percentages, worksheet_name, in
         workbook = load_workbook(os.path.join(API_DIR, "assessment","sample", "level1.xlsx"))
     worksheet = workbook[worksheet_name]
 
-    if worksheet_name == 'Page2':
-        add_image_to_worksheet(worksheet,folder_path,"top3dimmensions-1.png",8,7,330,130)
+    
+
+    if worksheet_name == 'Page3':
+        add_image_to_worksheet(worksheet,folder_path,"top3dimmensions-1.png",12,12,330,140)
         replacements = {
-            "B9":user_profile.name,
-            "B11":user_profile.dob,
-            "B13":user_profile.gender,
-            "B15":user_profile.status,
-            "B17":user_profile.mobile_no,
-            "B19":user_profile.user.email,
-            "B21":user_profile.address,
-            "B33":user_profile.goals,
-            "D8": labels[0],
-            "D10": labels[1],
-            "D11": labels[2],
-            "F8": round(percentages[0] * 100 / 72),
-            "F10": round(percentages[1] * 100 / 72),
-            "F11": round(percentages[2] * 100 / 72)
+            "C15":user_profile.name,
+            "C19":user_profile.dob,
+            "C23":user_profile.gender,
+            "C27":user_profile.marital_status,
+            "C31":user_profile.primary_mobile_no,
+            "C35":user_profile.user.email,
+            "C40":user_profile.residential_address,
+            "C60":user_profile.goals,
+            "H12": labels[0],
+            "H14": labels[1],
+            "H17": labels[2],
+            "K12": round(percentages[0] * 100 / 72),
+            "K14": round(percentages[1] * 100 / 72),
+            "K17": round(percentages[2] * 100 / 72)
         }
         
         for index,job in enumerate(user_profile.job_aspirations.all()):
-            replacements[f"B{27+index}"] = job.title
+            replacements[f"C{47+index*2}"] = job.title
         
         update_worksheet_cells(worksheet,replacements)
         update_page2_cells(worksheet, inclines)
-    elif worksheet_name == 'Page3':
-        add_image_to_worksheet(worksheet,folder_path,"top3dimmensions-2.png",7,7,330,130)
+    
+    
+    
+    elif worksheet_name in ['Page4','Page5']:
+        # add_image_to_worksheet(worksheet,folder_path,"top3dimmensions-2.png",7,7,330,130)
 
         replacements = {
-            "D7": labels[0],
-            "D9": labels[1],
-            "D11": labels[2],
-            "F7": round(percentages[0] * 100 / 72),
-            "F9": round(percentages[1] * 100 / 72),
-            "F11": round(percentages[2] * 100 / 72)
+            # "D7": labels[0],
+            # "D9": labels[1],
+            # "D11": labels[2],
+            # "F7": round(percentages[0] * 100 / 72),
+            # "F9": round(percentages[1] * 100 / 72),
+            # "F11": round(percentages[2] * 100 / 72)
         }
 
         update_worksheet_cells(worksheet,replacements)
         update_page3_cells(worksheet, inclines)
+
     elif worksheet_name == 'Page6':
-        add_image_to_worksheet(worksheet,folder_path,"top3dimmensions-3.png",7,7,330,130)
-
-        replacements = {
-            "D7": labels[0],
-            "D9": labels[1],
-            "D11": labels[2],
-            "F7": round(percentages[0] * 100 / 72),
-            "F9": round(percentages[1] * 100 / 72),
-            "F11": round(percentages[2] * 100 / 72)
-        }
-
-        update_worksheet_cells(worksheet,replacements)
-
-        update_page3_cells(worksheet, inclines)
-    elif worksheet_name == 'Page4':
-        add_image_to_worksheet(worksheet,folder_path,"virtueschart.png",7,7,350,200)
+        add_image_to_worksheet(worksheet,folder_path,"virtueschart.png",14,10,400,200)
         update_page4_cells(worksheet,virtues,folder_path)
-    elif worksheet_name == 'Page5':
+
+    
+    elif worksheet_name == 'Page7':
         update_page5_cells(worksheet,folder_path,labels,job_info,user_profile)
         
 
@@ -189,47 +179,44 @@ def insert_image_into_excel(folder_path, labels, percentages, worksheet_name, in
 
 def update_page2_cells(worksheet, inclines):
     replacements = {
-            "D15": ['input_dimension',inclines['feature']],
-            "D19":inclines['purpose_statement'],
-            "D24":"You " + inclines['thrive_environment'],
-            "D42":inclines['career_inclination_statement'],
-            "D46":inclines['quote'],
+            "G25": inclines['feature'],
+            "H34":inclines['purpose_statement'],
+            "H42":"You " + inclines['thrive_environment'].lower(),
+            "H64":inclines['career_inclination_statement'],
+            "I71":inclines['quote'],
     }
     
     
 
     inclinations = inclines['inclinations'].split('\n')
-    cont = 30
+   
     for i in range(len(inclinations)):
-        replacements[f"D{cont}"] = inclinations[i] 
-        cont = cont + 2   
+        replacements[f"H{50+i*2}"] = inclinations[i] 
     
     
     update_worksheet_cells(worksheet,replacements)
-    add_image_to_worksheet(worksheet,assets_folder,f"{inclines['feature']}.png",10,7,250,325)
+    add_image_to_worksheet(worksheet,assets_folder,f"{inclines['feature']}.png",17,13,300,400)
 
 def update_page3_cells(worksheet, inclines):
     # pass
     replacements = {
-            "B8": ['input_dimension',inclines['feature']],
-            "B13":inclines['purpose_statement'],
-            "B16":"You " + inclines['thrive_environment'],
-            "B34":inclines['career_inclination_statement'],
-            "B40":inclines['quote']
+            "A20": inclines['feature'],
+            "B31":inclines['purpose_statement'],
+            "B39":"You " + inclines['thrive_environment'].lower(),
+            "B65":inclines['career_inclination_statement'],
+            "J64":inclines['quote']
     }
 
 
 
     inclinations = inclines['inclinations'].split('\n')
-    cont = 21
     for i in range(len(inclinations)):
-        replacements[f"B{cont}"] = inclinations[i]
-        cont = cont + 2
+        replacements[f"C{47+i*2}"] = inclinations[i]
     
     
 
     update_worksheet_cells(worksheet,replacements)
-    add_image_to_worksheet(worksheet,assets_folder,f"{inclines['feature']}.png",14,7,250,325)
+    add_image_to_worksheet(worksheet,assets_folder,f"{inclines['feature']}.png",8,7,400,550)
     
 
 
@@ -258,49 +245,35 @@ def update_page6_cells(worksheet, inclines):
 
 
 def update_page4_cells(worksheet,virtues,folder_path):
-    cell_positions = [("B15", "B14"), ("E19", "E18"), ("B22", "B21")]
+    cell_positions = [("B25", "B23"), ("B35", "B33"), ("B45", "B43")]
+    
 
     for i, (value_cell, virtue_cell) in enumerate(cell_positions):
         worksheet[value_cell] = virtues[i]['text']
         worksheet[virtue_cell] = virtues[i]['virtue']
+        worksheet[f"S{i+11}"] = round(virtues[i]["rank"]*100/40)
 
 
     
     middle_three = []
-    for i in range(27,30):
-        worksheet[f"B{i}"] = f'{i-26}. {virtues[i-24]["virtue"]}'
-        middle_three.append(virtues[i-24]["virtue"])
+    cells = ('57','60','63')
+    for i in range(3):
+        worksheet[f"C{cells[i]}"] = f'{virtues[i+3]["virtue"]}'
+        middle_three.append(virtues[i+3]["virtue"])
     
     bottom_three = []
-    for i in range(37,40):
-        worksheet[f"B{i}"] = f'{i-36}. {virtues[i-31]["virtue"]}'
-        bottom_three.append(virtues[i-31]["virtue"])
+    cells = ('68','71','74')
+    for i in range(3):
+        worksheet[f"C{cells[i]}"] = f'{virtues[i+6]["virtue"]}'
+        bottom_three.append(virtues[i+6]["virtue"])
 
     replacements = {
-             "B32": ['middle_three_virtues',', '.join(middle_three[:-1]) + ' and ' + middle_three[-1]],
-             "B42": ['bottom_three_virtues',', '.join(bottom_three[:-1]) + ' and ' + bottom_three[-1]],
+             "J57": ['middle_three_virtues',', '.join(middle_three[:-1]) + ' and ' + middle_three[-1]],
+             "J68": ['bottom_three_virtues',', '.join(bottom_three[:-1]) + ' and ' + bottom_three[-1]],
 
     }
     
     update_worksheet_cells(worksheet,replacements)
-    cell_coordinates = [(14, 6), (18, 2), (21, 6)]
-    for i in range(3):
-        data = [virtues[i]['rank'] * 2]
-
-        fig, ax = plt.subplots(figsize=(7, 4))
-
-        ax.barh(1, data, color='#dddbd1', height=0.5, align='center')
-
-        ax.set_xlabel('X-axis Label')
-        ax.set_ylabel('Y-axis Label')
-        ax.set_xlim(0, 100)
-        
-        ax.set_yticks([])
-
-        plt.savefig(os.path.join(folder_path, f"virtue{i + 1}.png"), dpi=300, transparent=True,  bbox_inches='tight'    )
-        row, col = cell_coordinates[i]
-        add_image_to_worksheet(worksheet,folder_path,f"virtue{i+1}.png",row,col,350,95)
-
 
 
 def update_page5_cells(worksheet,folder_path,labels,job_info,user_profile):
@@ -341,10 +314,9 @@ def update_page5_cells(worksheet,folder_path,labels,job_info,user_profile):
             ax.annotate(recipe[i], xy=(x, y), xytext=(1.75 * np.sign(x), 1.4 * y),
                         horizontalalignment=horizontalalignment, **kw)
             
-            worksheet[f"B{23+annotation_indices.index(i)}"] = recipe[i].capitalize()
-            worksheet[f"C{23+annotation_indices.index(i)}"] = ROLES[recipe[i].lower()]
+            worksheet[f"B{48+annotation_indices.index(i)*3}"] = recipe[i].capitalize()
+            worksheet[f"E{48+annotation_indices.index(i)*3}"] = ROLES[recipe[i].lower()]
 
-    # Add 'A' to the center of the pie chart with path effects
     center_text = plt.gca().text(0.0, 0.0, 'Limeneal', color='white', ha='center', va='center', size=10,fontfamily='sans-serif')
     stroke = withStroke(linewidth=3, foreground='black')
     center_text.set_path_effects([stroke, path_effects.Normal()])
@@ -357,7 +329,7 @@ def update_page5_cells(worksheet,folder_path,labels,job_info,user_profile):
     plt.clf()
     plt.close()
     
-    add_image_to_worksheet(worksheet,folder_path,"job1dimmensions.png",12,2,500,230)
+    add_image_to_worksheet(worksheet,folder_path,"job1dimmensions.png",29,2,500,230)
 
     fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
     explode = [0.05, 0.05, 0.05, 0.05, 0.05, 0.05,0.05, 0.05, 0.05]
@@ -398,57 +370,58 @@ def update_page5_cells(worksheet,folder_path,labels,job_info,user_profile):
     plt.clf()
     plt.close()
 
-    add_image_to_worksheet(worksheet,folder_path,"usersdimmensions.png",12,6,500,230)
+    add_image_to_worksheet(worksheet,folder_path,"usersdimmensions.png",29,10,500,230)
     
     replacements = {
-        "C11": f"{job_info[0]['job_name']}'s Inclinations",
-        "G11": f"{user_profile.name}'s Inclinations",
-        "B21": ['job_name',job_info[0]['job_name']],
-        "F21": ['user_name',user_profile.name]
+        "B22": f"{job_info[0]['job_name']}'s Inclinations",
+        "J22": f"{user_profile.name}'s Inclinations",
+        "B45": ['job_name',job_info[0]['job_name']],
+        "J45": ['user_name',user_profile.name]
     }
 
     update_worksheet_cells(worksheet,replacements)
-    for i in range(23,26):
-        worksheet[f"F{i}"] = labels[i-23].capitalize()
-        worksheet[f"G{i}"] =   ROLES[labels[i-23].lower()]
+    for i in range(3):
+        worksheet[f"J{48+i*3}"] = labels[i].capitalize()
+        worksheet[f"M{48+i*3}"] =   ROLES[labels[i].lower()]
 
+def convert_page_to_image(args):
+    folder_path, excel_filename, page_num, page_prefix = args
+    page_name = f"{page_prefix}{page_num}"
+    image_name = f"{page_name}.png"
 
+    excel2img.export_img(
+        os.path.join(folder_path, excel_filename),
+        os.path.join(folder_path, image_name),
+        "",
+        f"{page_name}!A1:Q77"
+    )
 
-def convert_excel_to_pdf(folder_path, type, excel_filename="level1report.xlsx", num_pages=4, page_prefix="Page"):
-    
-    image_paths = []
-    if type == "Career":
-        pages_to_include = [1, 2, 3,6, 4, 5]
-    elif type == "Leadership":
-        pages_to_include = [1, 2, 4]
-    else:
-        pages_to_include = list(range(1, num_pages + 1))
-    pages_to_include = [1, 2, 3,6, 4, 5]
-    # excel = win32.gencache.EnsureDispatch('Excel.Application')
+    return os.path.join(folder_path, image_name)
 
-    # try:
-    #     workbook = excel.Workbooks.Open( os.path.join(folder_path, excel_filename))
-    for page_num in pages_to_include:
-        page_name = f"{page_prefix}{page_num}"
-        image_name = f"{page_name}.png"
+def convert_excel_to_pdf(folder_path, type, excel_filename="level1report.xlsx", num_pages=8, page_prefix="Page"):
+    # Determine pages to include based on type or use all pages
+    # if type == "Career":
+    #     pages_to_include = [1, 2, 3, 6, 4, 5]
+    # elif type == "Leadership":
+    #     pages_to_include = [1, 2, 4]
+    # else:
+    pages_to_include = list(range(1, num_pages + 1))
 
-        excel2img.export_img(
-            os.path.join(folder_path, excel_filename),
-            os.path.join(folder_path, image_name),
-            "",
-            f"{page_name}!A1:H53"
-        )
-                
-            
-        image_paths.append(os.path.join(folder_path, image_name))
-   
+    pool = Pool()
+
+    args_list = [(folder_path, excel_filename, page_num, page_prefix) for page_num in pages_to_include]
+
+    image_paths = pool.map(convert_page_to_image, args_list)
+
+    # Close the pool to release resources
+    pool.close()
+    pool.join()
+
     pdf_data = img2pdf.convert(image_paths)
 
     pdf_output_path = os.path.join(folder_path, "output.pdf")
     with open(pdf_output_path, "wb") as file:
         file.write(pdf_data)
 
-    for filename in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, filename)
-        if filename != "output.pdf" and os.path.isfile(file_path):
-            os.remove(file_path)
+    for filename in image_paths:
+        os.remove(filename)

@@ -1,20 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import configData from '../../config';
 import { useSelector } from 'react-redux';
 import { MobileStepper, Button, Typography, Radio, RadioGroup, FormControl, FormControlLabel } from '@material-ui/core';
-import { KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
+import { KeyboardArrowRight } from '@material-ui/icons';
 import Level3Bucket from '../../ui-component/bucket/level3';
 
 let res = {};
 let question_rankings = [];
 
 function Step3(props) {
-    const { setActiveSteps } = props;
+    const { setActiveLevel } = props;
     const [columns, setColumns] = useState({ requested: { items: [] } });
-    // const radioGroupRef = useRef(null);
-    const [selectedValue, setSelectedValue] = React.useState(''); // You can set an initial value if needed
+    const [selectedValue, setSelectedValue] = React.useState(''); 
     const [loading, setLoading] = useState(false);
     const account = useSelector((state) => state.account);
     const [activeStep, setActiveStep] = React.useState(0);
@@ -90,7 +88,6 @@ function Step3(props) {
                 headers: { Authorization: `${account.token}` }
             });
         }
-
         setQuestions(res.data);
         const taskStatus = {
             requested: {
@@ -99,7 +96,6 @@ function Step3(props) {
                     ...e,
                     id: e.id.toString(),
                     text: e.name
-                    // text:'hello'
                 }))
             },
             bucket1: {
@@ -116,7 +112,6 @@ function Step3(props) {
             }
         };
 
-        // console.log(tas)
         setColumns(taskStatus);
 
         console.log(question_rankings);
@@ -160,12 +155,8 @@ function Step3(props) {
             addToRankings(columns['bucket2']['items'], 3);
             addToRankings(columns['bucket3']['items'], 6);
 
-            // question_rankings.push(rankings);
-
             console.log(question_rankings);
         } else {
-            // const selectedValue = radioGroupRef.current.value;
-            // console.log(radioGroupRef.current); // This will log the selected value
             console.log(selectedValue);
             setSelectedValue('');
             question_rankings.push({
@@ -173,22 +164,16 @@ function Step3(props) {
                 quiz: quizId,
                 nlp: selectedValue
             });
-            // console.log(questions[activeStep]);
         }
-
-        // console.log(questions.length,activeStep+1)
         (async () => {
             if (questions.length === activeStep + 1) {
                 try {
                     const response = await axios.post(`${configData.API_SERVER}assessment/level3response`, question_rankings, {
                         headers: { Authorization: `${account.token}` }
                     });
-                    setActiveSteps(3);
-                    // Handle the response data here
-                    console.log(response.data); // Example: log the response data
+                    setActiveLevel(3);
                 } catch (error) {
                     console.error('Error fetching data:', error);
-                    // Handle the error here
                 }
             }
         })();

@@ -61,8 +61,9 @@ ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="*").split(" ")
 # Application definition
 
 INSTALLED_APPS = [
-    "jet",
+    # "jet",
     "django.contrib.admin",
+    # 'admin_reorder',
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -87,6 +88,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+       #  'admin_reorder.middleware.ModelAdminReorder',
 ]
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -210,3 +212,8 @@ if CORS_ALLOWED_ORIGINS_ENV:
 
 TESTING = False
 TEST_RUNNER = "core.test_runner.CoreTestRunner"
+
+
+# ADMIN_REORDER = (
+#     {'app': 'assessment','label': 'Level1','models': ('assessment.Quiz',)},
+# )

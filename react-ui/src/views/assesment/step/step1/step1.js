@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@material-ui/core';
 
 
 
-export default (props) => {
+const Step1 = (props) => {
     const { question,setDisabled } = props;
     const  temp = question.answers.map((answer) => {
         return { ...answer, isTouched: false };
@@ -50,12 +50,13 @@ export default (props) => {
 
     return (
         <TableContainer component={Paper}>
-            {question.text}
+            <Typography fontWeight={'bold'} fontSize={'md'} marginLeft={2}>{question.text}</Typography>
+            <Typography fontSize={'0.7rem'} textAlign={'center'}></Typography>
             <Table aria-label="simple table">
                 <TableHead>
                     <TableRow>
                         <TableCell>Rank</TableCell>
-                        <TableCell>Option</TableCell>
+                        <TableCell>Option<Typography fontSize={'small'} fontWeight={100}>Drag and drop the options listed on the right in order of your preferred ranking</Typography></TableCell>
                     </TableRow>
                 </TableHead>
                 {/* <TableBody> */}
@@ -96,3 +97,5 @@ export default (props) => {
         </TableContainer>
     );
 };
+
+export default Step1;

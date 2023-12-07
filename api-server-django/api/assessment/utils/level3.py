@@ -14,7 +14,7 @@ import numpy as np
 import excel2img
 import img2pdf
 from api.constants import API_DIR
-from api.assessment.helperfunctions.common import get_careers_from_dimmensions
+from api.assessment.helperfunctions.common import get_careers_from_dimmensions, generate_report_file_path
 
 
 activities_path = os.path.join(API_DIR, "assessment","assets","level2", 'dimmensions')
@@ -72,10 +72,7 @@ def Generate_level3_Report(user_profile,data):
     user_dimmensions = [i[0] for i in data]
     generate_user_pie_chart(user_dimmensions[0:3],new_folder_path)
     job_info = generate_jobs_pie_chart(new_folder_path,user_profile,count=5)
-
     
-    
-
     excel = insert_image_into_excel(worksheet_name='Data',data=data)
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page2',data=user_dimmensions[0:2])
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page3',data=user_dimmensions[2:4])

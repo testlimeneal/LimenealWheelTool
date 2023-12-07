@@ -3,9 +3,7 @@ from api.assessment.models import UserResponse, Bucket, Virtue, UserProfile, Ans
 from api.assessment.utils.level1 import Generate_level1_Report
 
 
-def process_level1_career_report(user_id, quiz_id):
-
-    print("hello")
+def process_level1_scores(user_id,quiz_id=1):
     queryset = UserResponse.objects.filter(
         user=user_id).filter(quiz=quiz_id)
     temp = list(Bucket.objects.all().values())
@@ -81,8 +79,6 @@ def process_level1_career_report(user_id, quiz_id):
         count[virtue_bucket[i]] = addition[virtue_bucket[i]]
     top_three = sorted(addition.items(),
                        key=lambda x: x[1], reverse=True)[:3]
-    
-    print(count)
     f = []
     v = []
     res = []
@@ -98,12 +94,20 @@ def process_level1_career_report(user_id, quiz_id):
 
     sorted_virtues = sorted(list(res_v.values()),
                             key=lambda x: x['rank'], reverse=True)
+    
+    user_profile.level1 = count
+    user_profile.save()
+    return f, v, res, sorted_virtues, job_info,user_profile
+
+def process_level1_career_report(user_id, report_id,quiz_id=1):
+
+
+    f, v, res, sorted_virtues, job_info,user_profile = process_level1_scores(user_id)
+    
     file_path = Generate_level1_Report(
         f, v, res, sorted_virtues, job_info,user_profile, 'Career')
 
-    count['file_path'] = file_path
-    
-    user_profile.level1 = count
+    user_profile.file_paths[report_id] = file_path
     user_profile.save()
 
     return file_path

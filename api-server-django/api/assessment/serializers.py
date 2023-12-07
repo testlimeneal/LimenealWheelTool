@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.assessment.models import Quiz, Question, Answer,UserResponse, UserProfile, Job, Level2Option,Level3Question,Trait,Level2Question, Level2Response
+from api.assessment.models import Quiz, Question,CareerCluster  , Answer,UserResponse, UserProfile, Job, Level2Option,Level3Question,Trait,Level2Question, Level2Response
 
 
 class TraitSerializer(serializers.ModelSerializer):
@@ -72,13 +72,18 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = '__all__'  # You can specify specific fields if needed
 
-
+class CareerClusterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CareerCluster
+        fields = ('id', 'name')
 
 
 class JobSerializer(serializers.ModelSerializer):
+    career_cluster = CareerClusterSerializer()  # Nested serializer for CareerCluster
+
     class Meta:
         model = Job
-        fields = '__all__'
+        fields = ('id','title','career_cluster')
 
 class GenderStatusSerializer(serializers.Serializer):
     GENDER_CHOICES = UserProfile.GENDER_CHOICES

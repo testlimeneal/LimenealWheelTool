@@ -1,11 +1,14 @@
 from api.assessment.models import  UserProfile, Level2Response, Level2Bucket, LearningStyle
-from api.assessment.utils.level1 import Generate_level1_Report
+from api.assessment.helperfunctions.level1 import process_level1_scores
 from api.assessment.utils.level2 import Generate_level2_Report
 
 
-def process_level2_career_report(user_id):
+
+def process_level2_scores(user_id):
     responses = Level2Response.objects.filter(user=user_id)
     user_profile = UserProfile.objects.get(user=user_id)
+    if not user_profile.level1:
+        user_profile = process_level1_scores(user_id)[-1]
 
     dimmensions = [response for response in responses if response.nlp is None]
     nlp = [response for response in responses if response.nlp is not None]
@@ -108,10 +111,8 @@ def process_level2_career_report(user_id):
             else:
                 res.append([purpose_ids[0],passion_ids[1],purpose_ids[1]])
 
-        # print(res)
-        # print(activities)
         for dim in res[i]:
-            dim['activities'] = activities[f'bucket{i+1}'][dim['id']] 
+            dim['activities'] = activities[f'bucket{i+1}'].setdefault(dim['id'], {}) 
 
         res_ids = {item['id'] for item in res[i]}
         passion_ids = [item for item in passion_ids if item['id'] not in res_ids]
@@ -129,17 +130,18 @@ def process_level2_career_report(user_id):
         nlp_data[0]['statement'] = result_dict['visual']['statement']
     else:
         nlp_data = [result_dict[first_element[0]],result_dict[second_element[0]]]
-    
-    # print(bucket_instances)
-
-    
 
     dimmensions_data = [sorted(i, key=lambda x: x['value'],reverse=True) for i in res]
-    
+    level2_data = {"value":dimmensions_data}
+    user_profile.level2 = level2_data
+    user_profile.save()
+    return dimmensions_data,nlp_data,bucket_instances,user_profile
 
+def process_level2_career_report(user_id,report_id):
+    
+    dimmensions_data,nlp_data,bucket_instances,user_profile = process_level2_scores(user_id)
     file_path = Generate_level2_Report(dimmensions_data,nlp_data,bucket_instances,user_profile)
     
-    level2_data = {"value":dimmensions_data,"file_path" : file_path}
-    user_profile.level2 = level2_data
+    user_profile.file_paths[report_id] = file_path
     user_profile.save()
     return file_path

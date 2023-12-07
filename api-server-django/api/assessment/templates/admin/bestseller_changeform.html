@@ -1,0 +1,14 @@
+{% extends 'admin/change_form.html' %}
+
+{% block submit_buttons_bottom %}
+<div class="submit-row">
+  <label for="id_report_types">Select Report Types:</label>
+  <select multiple name="report_types" id="id_report_types">
+    {% for report_type in report_types %}
+      <option value="{{ report_type.id }}">{{ report_type.name }}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" value="Download Reports" name="download-reports" />
+</div>
+{{ block.super }}
+{% endblock %}

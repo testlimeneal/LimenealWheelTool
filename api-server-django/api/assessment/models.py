@@ -1,13 +1,11 @@
 
 from django.db import models
-from api.user.models import User
 from django.conf import settings
-from django.core.exceptions import ValidationError
 
 class Quiz(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-
+    
     def __str__(self):
         return f"ID:{str(self.id)} | {self.title}  "
 
@@ -34,6 +32,9 @@ class Bucket(models.Model):
     careers = models.CharField(max_length=200, null=True, blank=True)
     quote = models.CharField(null=True,blank=True,max_length=400)
 
+    class Meta:
+        verbose_name = "Level1 Bucket"
+
     def __str__(self):
         return f"Bucket for {self.feature} | {self.id}"
 
@@ -56,6 +57,9 @@ class Question(models.Model):
 
     def __str__(self):
         return self.text
+    
+    class Meta:
+        verbose_name = "Level1 Question"
 
 
 
@@ -67,6 +71,9 @@ class Answer(models.Model):
 
     def __str__(self):
         return f"{self.text} | {self.question}" 
+    
+    class Meta:
+        verbose_name = "Level1 Option"
 
 class UserResponse(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -79,7 +86,7 @@ class UserResponse(models.Model):
         return f"{self.user.username}'s Response for {self.quiz.title}"
 
     class Meta:
-        unique_together = ['user', 'quiz', 'question','answer']  # Ensures a user can't submit multiple responses to the same question in a quiz.
+        unique_together = ['user', 'quiz', 'question','answer']
 
 class CareerCluster(models.Model):
     name = models.CharField(max_length=255)
@@ -94,15 +101,8 @@ class Job(models.Model):
     lwdimension_field2 = models.ForeignKey(Bucket, on_delete=models.SET_NULL, null=True, blank=True,related_name='lwdimension_field2_jobs')
     lwdimension_field3 = models.ForeignKey(Bucket, on_delete=models.SET_NULL, null=True, blank=True,related_name='lwdimension_field3_jobs')
 
-
-    # company = models.CharField(max_length=255)
-
     def __str__(self):
         return self.title
-
-
-
-
 
 class ReportType(models.Model):
     LEVEL_CHOICES = (
@@ -118,14 +118,12 @@ class ReportType(models.Model):
         ('Career + Leadership', 'Career + Leadership'),
         ('Talent', 'Talent'),
         ('Full',"Full")
-
     )
 
     level = models.CharField(max_length=8, choices=LEVEL_CHOICES)
     report_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
 
     def combined_field(self):
-        # Combine level and report_type into a single string
         return f"{self.level} - {self.report_type}"
 
     def __str__(self):
@@ -185,7 +183,6 @@ class Level2Bucket(models.Model):
     emotion = models.CharField(null=True,blank=True,max_length=100)
     colour = models.CharField(null=True,blank=True,max_length=100)
 
-
     motivation = models.CharField(null=True,blank=True,max_length=300)
     power_motivation = models.CharField(null=True,blank=True,max_length=500)
     push_motivation = models.CharField(null=True,blank=True,max_length=500)
@@ -194,13 +191,6 @@ class Level2Bucket(models.Model):
     power_virtue = models.CharField(null=True,blank=True,max_length=500)
     push_virtue = models.CharField(null=True,blank=True,max_length=500)
     pain_virtue = models.CharField(null=True,blank=True,max_length=500)
-
-
-
-
-    # candidate_passions = models.TextField(null=True, blank=True)
-    # candidate_motivation = models.TextField(null=True, blank=True)
-    # tips_to_strengthen = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"Level2Bucket for {self.bucket.feature} | {self.id}"
@@ -221,42 +211,40 @@ class UserProfile(models.Model):
     )
 
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,  
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='profile',
     )
     name = models.CharField(max_length=255)
     dob = models.DateField()
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
-    status = models.CharField(max_length=7, choices=STATUS_CHOICES)
-    mobile_no = models.CharField(max_length=15)
-    # email_id = models.EmailField()
-    address = models.TextField()
+    marital_status = models.CharField(max_length=7, choices=STATUS_CHOICES)
+    primary_mobile_no = models.CharField(max_length=15)
+    secondary_mobile_no = models.CharField(max_length=15, blank=True, null=True)
+    residential_address = models.TextField()
+    current_address = models.TextField(blank=True, null=True)
+    professional_status = models.CharField(max_length=255, blank=True, null=True)
+    school_name = models.CharField(max_length=255, blank=True, null=True)
+    school_grade = models.CharField(max_length=10, blank=True, null=True)
+    school_division = models.CharField(max_length=255, blank=True, null=True)
+    school_board = models.CharField(max_length=255, blank=True, null=True)
+    college_name = models.CharField(max_length=255, blank=True, null=True)
+    university_name = models.CharField(max_length=255, blank=True, null=True)
+    specialization = models.CharField(max_length=255, blank=True, null=True)
+    qualification = models.CharField(max_length=255, blank=True, null=True)
+    hobbies = models.CharField(max_length=255, blank=True, null=True)
+    interested_sports = models.CharField(max_length=255, blank=True, null=True)
     job_aspirations = models.ManyToManyField(Job, related_name='aspirants')
-    report_paid = models.ManyToManyField(ReportType, related_name='report_paid',null=True,blank=True)
+    report_paid = models.ManyToManyField(ReportType, related_name='report_paid', null=True, blank=True)
     goals = models.CharField(max_length=255)
 
+    file_paths = models.JSONField(default=dict)
     level1 = models.JSONField(null=True, blank=True)
     level2 = models.JSONField(null=True, blank=True)
     level3 = models.JSONField(null=True, blank=True)
 
-
     def __str__(self):
         return self.name
-
-
-
-
-
-
-
-# class Trait(models.Model):
-#     name = models.CharField(max_length=100)
-
-
-#     def __str__(self):
-#         return f"{self.name}"
-
 
 class DecisionMaking(models.Model):
     name = models.CharField(max_length=100)
@@ -264,7 +252,6 @@ class DecisionMaking(models.Model):
 
     def __str__(self):
         return f"{self.name}"
-
 
 class Trait(models.Model):
     TYPE_CHOICES = [
@@ -283,17 +270,6 @@ class Trait(models.Model):
 
     def __str__(self):
         return f"{self.name}"
-
-# class Virtue(models.Model):
-#     virtue = models.CharField(max_length=100)
-#     text = models.CharField(max_length=200,null=True,blank=True)
-
-
-#     def __str__(self):
-#         return f"Virtue for {self.virtue} | {self.id}"
-
-
-    # class Level3Group(models.Model):
         
 class Level3Bucket(models.Model):
     bucket = models.OneToOneField(Bucket, on_delete=models.CASCADE, related_name='level3_bucket',null=True,blank=True)
@@ -301,17 +277,6 @@ class Level3Bucket(models.Model):
 
     def __str__(self):
         return f"Bucket {self.bucket.feature}"
-
-
-# fixed_trait2 = models.OneToOneField(Trait, on_delete=models.CASCADE, related_name='level3_fixedtrait1',null=True,blank=True)
-# variable_trait1 = models.OneToOneField(Trait, on_delete=models.CASCADE, related_name='level3_variabletrait1',null=True,blank=True)
-# variable_trait2 = models.OneToOneField(Trait, on_delete=models.CASCADE, related_name='level3_variabletrait2',null=True,blank=True)
-
-
-def __str__(self):
-    return f"{self.bucket.feature}"
-
-
 
 class Level3Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='level3questions')
@@ -327,7 +292,6 @@ class Level3Response(models.Model):
     question = models.ForeignKey(Level3Question, on_delete=models.CASCADE)
     answer = models.ForeignKey(Trait, on_delete=models.CASCADE,null=True,blank=True)
     rank = models.IntegerField(null=True,blank=True)
-    # nlp = models.CharField(null=True,blank=True,max_length=100)
 
     def __str__(self):
         return f"{self.user.username}'s Response for {self.quiz.title}"
