@@ -49,7 +49,8 @@ def generate_report_file_path(user_id, report_id):
         file_path = user_profile.file_paths.get(str(report_id), None) or process_level2_career_report(user_id, report_id)
     
     elif "Level 3" in report.level and "Career" in report.report_type:
-        file_path = user_profile.file_paths.get(str(report_id), None) or process_level3_career_report(user_id, report_id)
+        # file_path = user_profile.file_paths.get(str(report_id), None) or process_level3_career_report(user_id, report_id)
+        file_path =  process_level3_career_report(user_id, report_id)
 
     return file_path
 def generate_report(file_path):

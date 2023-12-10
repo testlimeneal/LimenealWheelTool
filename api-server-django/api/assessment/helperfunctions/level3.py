@@ -71,8 +71,7 @@ def process_level3_scores(user_id):
 
         
         virtue = get_virtue_object_by_dimmension_id(key)
-        print(chief_virtues_score)
-        virtue_info = (virtue.virtue, chief_virtues_score[key]*100/36,getattr(virtue, attribute_name))
+        virtue_info = (virtue.virtue, chief_virtues_score[str(key)]*100/36,getattr(virtue, attribute_name))
 
         traits_info =  sorted(
                     [( v['name'],v['value']*100/26,v['statements_dict'][attribute_name]) for k, v in dimensions[key].items()],

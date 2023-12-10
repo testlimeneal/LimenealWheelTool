@@ -17,7 +17,7 @@ function Step2(props) {
     const [selectedValue, setSelectedValue] = React.useState(''); // You can set an initial value if needed
     const [loading, setLoading] = useState(false);
     const account = useSelector((state) => state.account);
-    const [activeQuestion, setActiveQuestion] = React.useState(2);
+    const [activeQuestion, setActiveQuestion] = React.useState(0);
     const [questions, setQuestions] = React.useState([]);
     const [allowNext, setAllowNext] = React.useState(false);
 
