@@ -100,7 +100,7 @@ function Step2(props) {
         // console.log(res)
 
        
-        if (activeQuestion === 2) {
+        if (activeQuestion === 0) {
             res = await axios.get(`${configData.API_SERVER}assessment/quiz2`, {
                 headers: { Authorization: `${account.token}` }
             });
