@@ -4,10 +4,12 @@ import { useHistory } from 'react-router-dom';
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { LOGOUT } from "../store/actions";
+import config from "../config";
+
 const BASE_URL = process.env.NEXT_PUBLIC_REACT_APP_BASE_URL || "http://localhost:5000/api/"
 
 const Axios = axios.create({
-    baseURL: BASE_URL,
+    baseURL: config.API_SERVER,
 });
 
 const AxiosInterceptor = ({ children }) => {
