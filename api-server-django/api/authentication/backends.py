@@ -20,6 +20,7 @@ class ActiveSessionAuthentication(authentication.BaseAuthentication):
         if not auth_header:
             return None
 
+        
         token = auth_header.decode("utf-8")
 
         return self._authenticate_credentials(token)
@@ -27,11 +28,13 @@ class ActiveSessionAuthentication(authentication.BaseAuthentication):
     def _authenticate_credentials(self, token):
 
         try:
+            
             jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         except:
             
             raise exceptions.AuthenticationFailed(self.auth_error_message)
         try:
+            
             active_session = ActiveSession.objects.get(token=token)
         except:
 

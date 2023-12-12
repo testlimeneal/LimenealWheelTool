@@ -1,4 +1,4 @@
-import { dashboard } from './dashboard';
+import { user_dashboard,superadmin_dashboard } from './dashboard';
 import { profile } from './profile';
 import { utilities } from './utilities';
 import { other } from './other';
@@ -7,7 +7,7 @@ import { other } from './other';
 
 const menuItems = {
     // items: [dashboard, profile,utilities, other]
-    items: [dashboard, profile]
+    items: {'user':[user_dashboard, profile],'super-admin':[superadmin_dashboard]}
 };
 
 export default menuItems;

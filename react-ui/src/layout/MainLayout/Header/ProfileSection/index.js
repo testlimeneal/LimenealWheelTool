@@ -26,8 +26,8 @@ import ListItemButton from '@material-ui/core/ListItemButton';
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import axios from 'axios';
-
+// import axios from 'axios';
+import Axios from '../../../../config/axios';
 // project imports
 import MainCard from '../../../../ui-component/cards/MainCard';
 import Transitions from '../../../../ui-component/extended/Transitions';
@@ -146,8 +146,8 @@ const ProfileSection = () => {
       }
       
     const handleLogout = () => {
-        axios
-            .post( configData.API_SERVER + 'users/logout', {token: `${account.token}`}, { headers: { Authorization: `${account.token}` } })
+        Axios
+            .post('users/logout', {token: `${account.token}`}, { headers: { Authorization: `${account.token}` } })
             .then(function (response) {
                 
                 // Force the LOGOUT

@@ -77,7 +77,7 @@ const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAl
     const [item, setItem] = useState([]);
 
     useEffect(() => {
-        navigation.items.map((item, index) => {
+        navigation.items['user'].map((item, index) => {
             if (item.type && item.type === 'group') {
                 getCollapse(item, index);
             }

@@ -74,19 +74,20 @@ def Generate_level3_Report(user_profile,data):
     job_info = generate_jobs_pie_chart(new_folder_path,user_profile,count=5)
     
     excel = insert_image_into_excel(worksheet_name='Data',data=data)
+    
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page2',data=user_dimmensions[0:2])
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page3',data=user_dimmensions[2:4])
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page4',data=user_dimmensions[4:6])
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page5',data=user_dimmensions[6:8])
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page6',data=user_dimmensions[8:9])
-
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page7',data=(user_profile,job_info,user_dimmensions),folder_path=new_folder_path)
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page3',data=user_dimmensions[2:3])
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page4',data=user_dimmensions[3:5])
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page5',data=user_dimmensions[5:6])
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page6',data=user_dimmensions[6:8])
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page7',data=user_dimmensions[8:9])
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page8',data=(user_profile,job_info,user_dimmensions),folder_path=new_folder_path)
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page9',data=(user_profile,job_info,user_dimmensions),folder_path=new_folder_path)
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page10',data=(user_profile,job_info,user_dimmensions),folder_path=new_folder_path)
     
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page10',data=user_dimmensions[0:6])
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page11',data=user_dimmensions[6:9])
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page12',data=data)
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page11',data=user_dimmensions[0:6])
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page12',data=user_dimmensions[6:9])
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page13',data=data)
 
     excel.save(os.path.join(new_folder_path, "level3report.xlsx"))
 
@@ -147,6 +148,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         workbook = load_workbook(os.path.join(API_DIR, "assessment","sample", "level3.xlsx"))
     worksheet = workbook[worksheet_name]
 
+    # return workbook
     if worksheet_name == 'Data':
         replacements = {}
         row = 2
@@ -170,34 +172,22 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
 
         update_worksheet_cells(worksheet,replacements)
 
-    elif worksheet_name == 'Page2':
+    elif worksheet_name in ['Page2','Page4','Page6']:
      
-        add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",26,2,90,90) 
-        add_image_to_worksheet(worksheet,virtues_path,f"{data[1]}.png",54,2,90,90) 
+        add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",20,2,90,90) 
+        add_image_to_worksheet(worksheet,virtues_path,f"{data[1]}.png",50,2,90,90) 
 
-    elif worksheet_name == 'Page3':
-        add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",24,2,90,90) 
-        add_image_to_worksheet(worksheet,virtues_path,f"{data[1]}.png",56,2,90,90) 
-
-    elif worksheet_name == 'Page4':
-        add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",23,2,90,90) 
-        add_image_to_worksheet(worksheet,virtues_path,f"{data[1]}.png",52,2,90,90) 
-    
-    elif worksheet_name == 'Page5':
-        add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",27,2,90,90) 
-        add_image_to_worksheet(worksheet,virtues_path,f"{data[1]}.png",56,2,90,90) 
-    
-    elif worksheet_name == 'Page6':
-        add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",26,2,90,90) 
+    elif worksheet_name == ['Page3','Page5','Page7']:
+        add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",20,2,90,90) 
        
-    elif worksheet_name == 'Page7': 
+    elif worksheet_name == 'Page8': 
         user_profile,job_info,user_data = data  
 
         add_image_to_worksheet(worksheet,folder_path,"job1dimmensions.png",22,2,500,230)
         add_image_to_worksheet(worksheet,folder_path,"user_top3.png",22,10,500,230)
 
-        add_image_to_worksheet(worksheet,folder_path,"job2dimmensions.png",48,2,500,230)
-        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",48,10,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"job2dimmensions.png",51,2,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",51,10,500,230)
 
         replacements = {
             "B20":f"{job_info[0]['job_name']}'s Inclinations",
@@ -205,84 +195,84 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
             "B35":['job_name',job_info[0]['job_name']],
             "J35":['user_name',user_profile.name],
 
-            "B46":f"{job_info[1]['job_name']}'s Inclinations",
-            "J46":['user_name',user_profile.name],
-            "B61":['job_name',job_info[1]['job_name']],
-            "J61":['user_name',user_profile.name],
+            "B48":f"{job_info[1]['job_name']}'s Inclinations",
+            "J48":['user_name',user_profile.name],
+            "B63":['job_name',job_info[1]['job_name']],
+            "J63":['user_name',user_profile.name],
            
         }
 
-        for i in range(37, 40):
-            field_key = f"lwdimension_field{i - 36}"
+        for i,j in enumerate(range(38,45,3)):
+            field_key = f"lwdimension_field{i + 1}"
             dimension_value = job_info[0][field_key]
 
-            replacements[f"B{i}"] = dimension_value
-            replacements[f"E{i}"] = ROLES[dimension_value.lower()]
+            replacements[f"B{j}"] = dimension_value
+            replacements[f"E{j}"] = ROLES[dimension_value.lower()]
 
-            replacements[f"J{i}"] = dimension_value
-            replacements[f"M{i}"] = find_index_of_dimmension(user_data, dimension_value)
+            replacements[f"J{j}"] = dimension_value
+            replacements[f"M{j}"] = find_index_of_dimmension(user_data, dimension_value)
         
-        for i in range(63, 66):
-            field_key = f"lwdimension_field{i - 62}"
+        for i,j in enumerate(range(66,73,3)):
+            field_key = f"lwdimension_field{i + 1}"
             dimension_value = job_info[1][field_key]
 
-            replacements[f"B{i}"] = dimension_value
-            replacements[f"E{i}"] = ROLES[dimension_value.lower()]
+            replacements[f"B{j}"] = dimension_value
+            replacements[f"E{j}"] = ROLES[dimension_value.lower()]
 
-            replacements[f"J{i}"] = dimension_value
-            replacements[f"M{i}"] = find_index_of_dimmension(user_data, dimension_value)
+            replacements[f"J{j}"] = dimension_value
+            replacements[f"M{j}"] = find_index_of_dimmension(user_data, dimension_value)
         
         
 
         update_worksheet_cells(worksheet,replacements)
 
-        
-    
-    elif worksheet_name == 'Page8': 
+    elif worksheet_name == 'Page9': 
         user_profile,job_info,user_data = data  
 
         add_image_to_worksheet(worksheet,folder_path,"job3dimmensions.png",22,2,500,230)
         add_image_to_worksheet(worksheet,folder_path,"user_top3.png",22,10,500,230)
 
-        add_image_to_worksheet(worksheet,folder_path,"job4dimmensions.png",48,2,500,230)
-        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",48,10,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"job4dimmensions.png",51,2,500,230)
+        add_image_to_worksheet(worksheet,folder_path,"user_top3.png",51,10,500,230)
 
         replacements = {
             "B20":f"{job_info[2]['job_name']}'s Inclinations",
             "J20":['user_name',user_profile.name],
-            "B35":['job_name',job_info[0]['job_name']],
+            "B35":['job_name',job_info[2]['job_name']],
             "J35":['user_name',user_profile.name],
 
-            "B46":f"{job_info[3]['job_name']}'s Inclinations",
-            "J46":['user_name',user_profile.name],
-            "B61":['job_name',job_info[1]['job_name']],
-            "J61":['user_name',user_profile.name]
+            "B48":f"{job_info[3]['job_name']}'s Inclinations",
+            "J48":['user_name',user_profile.name],
+            "B63":['job_name',job_info[3]['job_name']],
+            "J63":['user_name',user_profile.name],
+           
         }
 
-        
-        for i in range(37, 40):
-            field_key = f"lwdimension_field{i - 36}"
+        for i,j in enumerate(range(38,45,3)):
+            field_key = f"lwdimension_field{i + 1}"
             dimension_value = job_info[2][field_key]
 
-            replacements[f"B{i}"] = dimension_value
-            replacements[f"E{i}"] = ROLES[dimension_value.lower()]
+            replacements[f"B{j}"] = dimension_value
+            replacements[f"E{j}"] = ROLES[dimension_value.lower()]
 
-            replacements[f"J{i}"] = dimension_value
-            replacements[f"M{i}"] = find_index_of_dimmension(user_data, dimension_value)
+            replacements[f"J{j}"] = dimension_value
+            replacements[f"M{j}"] = find_index_of_dimmension(user_data, dimension_value)
         
-        for i in range(63, 66):
-            field_key = f"lwdimension_field{i - 62}"
+        for i,j in enumerate(range(66,73,3)):
+            field_key = f"lwdimension_field{i + 1}"
             dimension_value = job_info[3][field_key]
 
-            replacements[f"B{i}"] = dimension_value
-            replacements[f"E{i}"] = ROLES[dimension_value.lower()]
+            replacements[f"B{j}"] = dimension_value
+            replacements[f"E{j}"] = ROLES[dimension_value.lower()]
 
-            replacements[f"J{i}"] = dimension_value
-            replacements[f"M{i}"] = find_index_of_dimmension(user_data, dimension_value)
+            replacements[f"J{j}"] = dimension_value
+            replacements[f"M{j}"] = find_index_of_dimmension(user_data, dimension_value)
+        
+        
 
         update_worksheet_cells(worksheet,replacements)
     
-    elif worksheet_name == 'Page9': 
+    elif worksheet_name == 'Page10': 
         user_profile,job_info,user_data = data  
 
         add_image_to_worksheet(worksheet,folder_path,"job5dimmensions.png",22,2,500,230)
@@ -292,80 +282,88 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
             "B20":f"{job_info[4]['job_name']}'s Inclinations",
             "J20":['user_name',user_profile.name],
             "B35":['job_name',job_info[4]['job_name']],
-            "J35":['user_name',user_profile.name]
+            "J35":['user_name',user_profile.name],
+
+           
         }
 
-        for i in range(37, 40):
-            field_key = f"lwdimension_field{i - 36}"
+        for i,j in enumerate(range(38,45,3)):
+            field_key = f"lwdimension_field{i + 1}"
             dimension_value = job_info[4][field_key]
 
-            replacements[f"B{i}"] = dimension_value
-            replacements[f"E{i}"] = ROLES[dimension_value.lower()]
+            replacements[f"B{j}"] = dimension_value
+            replacements[f"E{j}"] = ROLES[dimension_value.lower()]
 
-            replacements[f"J{i}"] = dimension_value
-            replacements[f"M{i}"] = find_index_of_dimmension(user_data, dimension_value)
-
+            replacements[f"J{j}"] = dimension_value
+            replacements[f"M{j}"] = find_index_of_dimmension(user_data, dimension_value)
         update_worksheet_cells(worksheet,replacements)
-
+        
     
-    elif worksheet_name == 'Page10': 
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",13,2,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",13,7,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",13,11,330,450)
+    
+    
+    elif worksheet_name == 'Page11': 
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",14,1,330,450)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",14,7,330,450)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",14,12,330,450)
 
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[3].lower()}.png",45,2,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[4].lower()}.png",45,7,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[5].lower()}.png",45,11,330,450)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[3].lower()}.png",44,1,330,450)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[4].lower()}.png",44,7,330,450)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[5].lower()}.png",44,12,330,450)
         
         replacements = {}
         
         power_careers = get_careers_from_dimmensions(data[0:3])
         push_careers = get_careers_from_dimmensions(data[3:6])
 
+        cells=('B31', 'B41', 'H38', 'H41', 'M38')
         for count,job in enumerate(power_careers):
-            replacements[f'B{count+38}'] = job.title
-
+            replacements[cells[count]] = job.title
+        
+        cells=('B68', 'B71', 'H68', 'H71', 'M68')
         for count,job in enumerate(push_careers):
-            replacements[f'B{count+70}'] = job.title
+            replacements[cells[count]] = job.title
 
-        top_three_labels = [i for i in data[0:3]]
-        top_three_roles = [LEVEL3_ROLES[i.lower()] for i in top_three_labels]
+        # top_three_labels = [i for i in data[0:3]]
+        # top_three_roles = [LEVEL3_ROLES[i.lower()] for i in top_three_labels]
 
-        middle_three_labels = [i for i in data[3:6]]
-        middle_three_roles = [LEVEL3_ROLES[i.lower()] for i in middle_three_labels]
+        # middle_three_labels = [i for i in data[3:6]]
+        # middle_three_roles = [LEVEL3_ROLES[i.lower()] for i in middle_three_labels]
 
-        power_sentence = f"Strong in {', '.join(top_three_labels[:-1])}, and {top_three_labels[-1]}, careers where you will find complete fulfilment will be where the inclination is to  {', '.join(top_three_roles[:-1])}, and {top_three_roles[-1]}"
-        push_sentence = f"Strong in {', '.join(middle_three_labels[:-1])}, and {middle_three_labels[-1]}, careers where you will find moderate fulfilment will be where the inclination is to  {', '.join(middle_three_roles[:-1])}, and {middle_three_roles[-1]}"
+        # power_sentence = f"Strong in {', '.join(top_three_labels[:-1])}, and {top_three_labels[-1]}, careers where you will find complete fulfilment will be where the inclination is to  {', '.join(top_three_roles[:-1])}, and {top_three_roles[-1]}"
+        # push_sentence = f"Strong in {', '.join(middle_three_labels[:-1])}, and {middle_three_labels[-1]}, careers where you will find moderate fulfilment will be where the inclination is to  {', '.join(middle_three_roles[:-1])}, and {middle_three_roles[-1]}"
       
-        replacements['B33'] = power_sentence
-        replacements['B65'] = push_sentence
+        # replacements['B33'] = power_sentence
+        # replacements['B65'] = push_sentence
         update_worksheet_cells(worksheet,replacements)
        
         # for i in enumerate
 
-    elif worksheet_name == 'Page11': 
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",13,2,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",13,7,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",13,11,330,450)
+    elif worksheet_name == 'Page12': 
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",14,1,330,450)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",14,7,330,450)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",14,12,330,450)
 
         replacements = {}
 
         pain_careers = get_careers_from_dimmensions(data[0:3])
-
+                        
+        cells=('B31', 'B41', 'H38', 'H41', 'M38')
         for count,job in enumerate(pain_careers):
-            replacements[f'B{count+38}'] = job.title
+            replacements[cells[count]] = job.title
         
-        bottom_three_labels = [i for i in data[0:3]]
-        bottom_three_roles = [LEVEL3_ROLES[i.lower()] for i in bottom_three_labels]
+        # bottom_three_labels = [i for i in data[0:3]]
+        # bottom_three_roles = [LEVEL3_ROLES[i.lower()] for i in bottom_three_labels]
 
-        pain_sentence = f"Strong in {', '.join(bottom_three_labels[:-1])}, and {bottom_three_labels[-1]}, careers where you will find least fulfilment will be where the inclination is to  {', '.join(bottom_three_roles[:-1])}, and {bottom_three_roles[-1]}"
+        # pain_sentence = f"Strong in {', '.join(bottom_three_labels[:-1])}, and {bottom_three_labels[-1]}, careers where you will find least fulfilment will be where the inclination is to  {', '.join(bottom_three_roles[:-1])}, and {bottom_three_roles[-1]}"
 
-        replacements['B33'] = pain_sentence
+        # replacements['B33'] = pain_sentence
         
         update_worksheet_cells(worksheet,replacements)
         
 
-    elif worksheet_name == 'Page12':
+    elif worksheet_name == 'Page13':
+        
+        worksheet = workbook['Page12'] #Did this because code was already implemeneted
         replacements = {}
         rows = {
             "Binder":"V4",
@@ -388,7 +386,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         
     return workbook
 
-def convert_excel_to_pdf(folder_path, type, excel_filename="level3report.xlsx", num_pages=13, page_prefix="Page"):
+def convert_excel_to_pdf(folder_path, type, excel_filename="level3report.xlsx", num_pages=15, page_prefix="Page"):
     
     image_paths = []
     # if type == "Career":
@@ -404,9 +402,9 @@ def convert_excel_to_pdf(folder_path, type, excel_filename="level3report.xlsx", 
             os.path.join(folder_path,"level3report.xlsx"),
             os.path.join(folder_path, image_name),
             page_name,
-            "A1:Q76"
+            "A1:Q77"
         )
-        image_paths.append(os.path.join(folder_path, image_name))
+        image_paths.append(os.path.join(folder_path, image_name))   
 
    
     pdf_data = img2pdf.convert(image_paths)

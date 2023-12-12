@@ -12,8 +12,10 @@ class LogoutViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     def create(self, request, *args, **kwargs):
         user = request.user
 
-        session = ActiveSession.objects.get(user=user)
-        session.delete()
+        sessions = ActiveSession.objects.filter(user=user)
+
+        for session in sessions:
+            session.delete()
 
         return Response(
             {"success": True, "msg": "Token revoked"}, status=status.HTTP_200_OK

@@ -19,7 +19,8 @@ const accountReducer = (state = initialState, action) => {
                 isLoggedIn,
                 isInitialized: true,
                 token,
-                user
+                user,
+                role:'super-admin'
             };
         }
         case LOGIN: {

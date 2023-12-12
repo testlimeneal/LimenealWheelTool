@@ -32,27 +32,40 @@ const SamplePage = Loadable(lazy(() => import('../views/sample-page')));
 const MainRoutes = () => {
     const location = useLocation();
 
+    const user_routes = ['/dashboard',
+
+    '/utils/util-typography',
+    '/utils/util-color',
+    '/utils/util-shadow',
+    '/icons/tabler-icons',
+    '/icons/material-icons',
+
+    '/profile/assesments',
+    '/profile/settings',
+    '/profile/reports',
+
+    '/sample-page']
+    const admin_routes = ['/dashboard',
+
+    '/utils/util-typography',
+    '/utils/util-color',
+    '/utils/util-shadow',
+    '/icons/tabler-icons',
+    '/icons/material-icons',
+
+    // '/profile/assesments',
+    '/profile/settings',
+    '/profile/reports',
+
+    '/sample-page']
     return (
         <Route
-            path={[
-                '/dashboard',
-
-                '/utils/util-typography',
-                '/utils/util-color',
-                '/utils/util-shadow',
-                '/icons/tabler-icons',
-                '/icons/material-icons',
-
-                '/profile/assesments',
-                '/profile/settings',
-                '/profile/reports',
-
-                '/sample-page'
-            ]}
+            path={user_routes}
         >
             <MainLayout>
                 <Switch location={location} key={location.pathname}>
                     <AuthGuard>
+                        
                         <Route path="/dashboard" component={DashboardDefault} />
 
                         <Route path="/utils/util-typography" component={UtilsTypography} />

@@ -1,5 +1,5 @@
 from django.contrib import admin,messages
-from api.assessment.models import Question, Bucket,DecisionMaking, Answer,Trait,Level3Group, Level3Bucket,Level3Question,UserResponse,LearningStyle,Virtue,Job,UserProfile,ReportType, CareerCluster,Level2Bucket,Level2Option,Level2Question
+from api.assessment.models import Question, Bucket,DecisionMaking, Answer,Trait,Level3Group, Level3Bucket,Level3Question,UserResponse,LearningStyle,Virtue,Job,UserProfile,ReportType, Level3Response,CareerCluster,Level2Bucket,Level2Option,Level2Question
 from django.shortcuts import render
 from django.urls import path
 from api.assessment.helperfunctions.common import generate_report_zip
@@ -10,6 +10,7 @@ from django.shortcuts import redirect
 admin.site.register(Question)
 admin.site.register(DecisionMaking)
 admin.site.register(Bucket)
+admin.site.register(Level3Response)
 # admin.site.register(UserResponse)
 admin.site.register(Virtue)
 admin.site.register(Level3Group)

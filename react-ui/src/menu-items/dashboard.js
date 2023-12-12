@@ -9,7 +9,7 @@ const icons = {
 
 //-----------------------|| DASHBOARD MENU ITEMS ||-----------------------//
 
-export const dashboard = {
+export const user_dashboard = {
     id: 'dashboard',
     title: 'Dashboard',
     type: 'group',
@@ -17,6 +17,38 @@ export const dashboard = {
         {
             id: 'default',
             title: 'Dashboard',
+            type: 'item',
+            url: '/dashboard',
+            icon: icons['IconDashboard'],
+            breadcrumbs: false
+        }
+    ]
+};
+
+export const superadmin_dashboard = {
+    id: 'dashboard',
+    title: 'Access Control',
+    type: 'group',
+    children: [
+        {
+            id: 'createuser',
+            title: 'Admin Acess',
+            type: 'item',
+            url: '/dashboard',
+            icon: icons['IconDashboard'],
+            breadcrumbs: false
+        },
+        {
+            id: 'createuser',
+            title: 'Client-Admin Acess',
+            type: 'item',
+            url: '/dashboard',
+            icon: icons['IconDashboard'],
+            breadcrumbs: false
+        },
+        {
+            id: 'createuser',
+            title: 'Client Sub-Admin Acess',
             type: 'item',
             url: '/dashboard',
             icon: icons['IconDashboard'],
