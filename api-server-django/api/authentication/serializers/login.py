@@ -3,7 +3,7 @@ from rest_framework import serializers, exceptions
 from django.contrib.auth import authenticate
 from datetime import datetime, timedelta
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
 
 from api.authentication.models import ActiveSession
 
@@ -45,12 +45,27 @@ class LoginSerializer(serializers.Serializer):
             )
 
         try:
+            
             session = ActiveSession.objects.get(user=user)
             if not session.token:
                 raise ValueError
 
             jwt.decode(session.token, settings.SECRET_KEY, algorithms=["HS256"])
 
+        except MultipleObjectsReturned:
+    # If multiple sessions are found, delete all except one (keep the first one)
+            sessions = ActiveSession.objects.filter(user=user)
+            for i, s in enumerate(sessions):
+                if i > 0:
+                    s.delete()
+            session = sessions.first()
+            try:
+                jwt.decode(session.token, settings.SECRET_KEY, algorithms=["HS256"])
+            except (jwt.ExpiredSignatureError):
+                session.delete()
+                session = ActiveSession.objects.create(
+                user=user, token=_generate_jwt_token(user)
+            )
         except (ObjectDoesNotExist, ValueError, jwt.ExpiredSignatureError):
             session = ActiveSession.objects.create(
                 user=user, token=_generate_jwt_token(user)
@@ -59,5 +74,5 @@ class LoginSerializer(serializers.Serializer):
         return {
             "success": True,
             "token": session.token,
-            "user": {"_id": user.pk, "username": user.username, "email": user.email},
+            "user": {"_id": user.pk, "username": user.username, "email": user.email,"role":user.role},
         }

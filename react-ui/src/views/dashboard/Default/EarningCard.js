@@ -174,7 +174,7 @@ const EarningCard = ({ isLoading }) => {
                             <Grid container alignItems="center">
                                 <Grid item>
 
-                                    <Typography className={classes.cardHeading}>Welcome                                 {account.user && account.user.username.charAt(0).toUpperCase() + account.user.username.slice(1)}
+                                    <Typography className={classes.cardHeading}>Welcome {account.user && account.user.role.toUpperCase()} - {account.user && account.user.username.charAt(0).toUpperCase() + account.user.username.slice(1)}
 ,</Typography>
                                 </Grid>
                                 <Grid item>

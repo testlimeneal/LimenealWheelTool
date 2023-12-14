@@ -2,7 +2,7 @@ import React from 'react';
 
 // material-ui
 import { Typography } from '@material-ui/core';
-
+import { useSelector } from 'react-redux';
 // project imports
 import NavGroup from './NavGroup';
 import menuItem from './../../../../menu-items';
@@ -10,7 +10,8 @@ import menuItem from './../../../../menu-items';
 //-----------------------|| SIDEBAR MENU LIST ||-----------------------//
 
 const MenuList = () => {
-    const navItems = menuItem.items['user'].map((item) => {
+    const account = useSelector((state) => state.account);
+    const navItems = (account.user && account.user.role) ? menuItem.items[account.user.role].map((item) => {
         switch (item.type) {
             case 'group':
                 return <NavGroup key={item.id} item={item} />;
@@ -21,7 +22,7 @@ const MenuList = () => {
                     </Typography>
                 );
         }
-    });
+    }) : [];
 
     return navItems;
 };

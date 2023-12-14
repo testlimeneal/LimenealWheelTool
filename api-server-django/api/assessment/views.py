@@ -83,10 +83,10 @@ class QuizDetailAPIView(generics.RetrieveAPIView):
 
 
         level_reached = 0
-
         user_response = UserResponse.objects.filter(user=request.user)
         if user_response.exists():
             level_reached = 1
+            
 
         level2_response = Level2Response.objects.filter(user=request.user)
         if level2_response.exists():
@@ -284,8 +284,8 @@ class Level3ResponseAPIView(APIView):
             
 
             # print([i/234*100 for i in dict.values()])
-            print(dimensions)
-            print("HEllo")
+            # print(dimensions)
+            # print("HEllo")
 
 
             # print(list(responses)[0].answer.name)

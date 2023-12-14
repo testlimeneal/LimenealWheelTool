@@ -9,24 +9,16 @@ const icons = {
 
 //-----------------------|| DASHBOARD MENU ITEMS ||-----------------------//
     
-export const profile = {
-    id: 'profile',
-    title: 'Profile',
+export const systemusers = {
+    id: 'users',
+    title: 'Limeneal Users',
     type: 'group',
     children: [
         {
-            id: 'assesments',
-            title: 'Assesments',
+            id: 'limeneal_users',
+            title: 'Manage User',
             type: 'item',
-            url: '/profile/assesments',
-            icon: icons['IconDashboard'],
-            breadcrumbs: false
-        },
-        {
-            id: 'reports',
-            title: 'Reports',
-            type: 'item',
-            url: '/profile/reports',
+            url: '/superadmin/users',
             icon: icons['IconDashboard'],
             breadcrumbs: false
         }

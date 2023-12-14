@@ -1,5 +1,5 @@
 from django.contrib import admin,messages
-from api.assessment.models import Question, Bucket,DecisionMaking, Answer,Trait,Level3Group, Level3Bucket,Level3Question,UserResponse,LearningStyle,Virtue,Job,UserProfile,ReportType, Level3Response,CareerCluster,Level2Bucket,Level2Option,Level2Question
+from api.assessment.models import Question, Bucket,DecisionMaking, Answer,Trait,Level2Response,Level3Group, Level3Bucket,Level3Question,UserResponse,LearningStyle,Virtue,Job,UserProfile,ReportType, Level3Response,CareerCluster,Level2Bucket,Level2Option,Level2Question
 from django.shortcuts import render
 from django.urls import path
 from api.assessment.helperfunctions.common import generate_report_zip
@@ -11,6 +11,7 @@ admin.site.register(Question)
 admin.site.register(DecisionMaking)
 admin.site.register(Bucket)
 admin.site.register(Level3Response)
+admin.site.register(Level2Response)
 # admin.site.register(UserResponse)
 admin.site.register(Virtue)
 admin.site.register(Level3Group)
@@ -19,10 +20,10 @@ admin.site.register(Job)
 
 class UserProfileReportAdmin(admin.ModelAdmin):
 
-    fields = ['user', 'name', 'dob', 'gender', 'marital_status', 'primary_mobile_no', 'secondary_mobile_no',
-              'residential_address', 'current_address', 'professional_status', 'school_name', 'school_grade',
-              'school_division', 'school_board', 'college_name', 'university_name', 'specialization', 'qualification',
-              'hobbies', 'interested_sports', 'job_aspirations', 'report_paid', 'goals']
+    # fields = ['user', 'name', 'dob', 'gender', 'marital_status', 'primary_mobile_no', 'secondary_mobile_no',
+    #           'residential_address', 'current_address', 'professional_status', 'school_name', 'school_grade',
+    #           'school_division', 'school_board', 'college_name', 'university_name', 'specialization', 'qualification',
+    #           'hobbies', 'interested_sports', 'job_aspirations', 'report_paid', 'goals']
     readonly_fields = ['user']
 
     change_form_template = 'admin/change_forms.html'

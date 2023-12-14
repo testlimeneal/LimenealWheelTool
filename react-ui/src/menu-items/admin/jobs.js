@@ -9,24 +9,16 @@ const icons = {
 
 //-----------------------|| DASHBOARD MENU ITEMS ||-----------------------//
     
-export const profile = {
-    id: 'profile',
-    title: 'Profile',
+export const jobs = {
+    id: 'jobs',
+    title: 'Add Careers',
     type: 'group',
     children: [
         {
-            id: 'assesments',
-            title: 'Assesments',
+            id: 'careers',
+            title: 'Manage Careers',
             type: 'item',
-            url: '/profile/assesments',
-            icon: icons['IconDashboard'],
-            breadcrumbs: false
-        },
-        {
-            id: 'reports',
-            title: 'Reports',
-            type: 'item',
-            url: '/profile/reports',
+            url: '/superadmin/jobs',
             icon: icons['IconDashboard'],
             breadcrumbs: false
         }

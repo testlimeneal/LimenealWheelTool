@@ -11,10 +11,10 @@ class CustomUserAdmin(UserAdmin):
     model = User
 
     list_display = ('username', 'email', 'is_active',
-                    'is_staff', 'is_superuser', 'last_login',)
+                    'is_staff', 'is_superuser','role' ,'date','last_login')
     list_filter = ('is_active', 'is_staff', 'is_superuser')
     fieldsets = (
-        (None, {'fields': ('username', 'email', 'password')}),
+        (None, {'fields': ('username', 'email', 'password','role')}),
         ('Permissions', {'fields': ('is_staff', 'is_active',
          'is_superuser', 'groups', 'user_permissions')}),
         ('Dates', {'fields': ('last_login', )})

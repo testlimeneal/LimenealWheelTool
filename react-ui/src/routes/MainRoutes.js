@@ -1,5 +1,6 @@
 import React, { lazy } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 // project imports
 import MainLayout from './../layout/MainLayout';
@@ -16,75 +17,49 @@ const UtilsShadow = Loadable(lazy(() => import('../views/utilities/Shadow')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('../views/utilities/MaterialIcons')));
 const UtilsTablerIcons = Loadable(lazy(() => import('../views/utilities/TablerIcons')));
 
-
-
-
 // assesments routing
 const Assesment = Loadable(lazy(() => import('../views/assesment')));
 const Report = Loadable(lazy(() => import('../views/profile/reports')));
 
-
+const Careers = Loadable(lazy(() => import('../views/superadmin/careers')));
+const Superadminusers = Loadable(lazy(() => import('../views/superadmin/users')));
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('../views/sample-page')));
 
 //-----------------------|| MAIN ROUTING ||-----------------------//
 
 const MainRoutes = () => {
-    const location = useLocation();
+  const location = useLocation();
+  const account = useSelector((state) => state.account);
 
-    const user_routes = ['/dashboard',
-
-    '/utils/util-typography',
-    '/utils/util-color',
-    '/utils/util-shadow',
-    '/icons/tabler-icons',
-    '/icons/material-icons',
-
-    '/profile/assesments',
-    '/profile/settings',
-    '/profile/reports',
-
-    '/sample-page']
-    const admin_routes = ['/dashboard',
-
-    '/utils/util-typography',
-    '/utils/util-color',
-    '/utils/util-shadow',
-    '/icons/tabler-icons',
-    '/icons/material-icons',
-
-    // '/profile/assesments',
-    '/profile/settings',
-    '/profile/reports',
-
-    '/sample-page']
-    return (
-        <Route
-            path={user_routes}
-        >
-            <MainLayout>
-                <Switch location={location} key={location.pathname}>
-                    <AuthGuard>
-                        
-                        <Route path="/dashboard" component={DashboardDefault} />
-
-                        <Route path="/utils/util-typography" component={UtilsTypography} />
-                        <Route path="/utils/util-color" component={UtilsColor} />
-                        <Route path="/utils/util-shadow" component={UtilsShadow} />
-                        <Route path="/icons/tabler-icons" component={UtilsTablerIcons} />
-                        <Route path="/icons/material-icons" component={UtilsMaterialIcons} />
+  const roleRoutes = {
+    user: ['/dashboard', '/profile/assesments', '/profile/settings', '/profile/reports'],
+    superadmin: ['/dashboard', '/superadmin/jobs', '/superadmin/users'],
+    // Add more roles and their corresponding routes as needed
+  };
+  
+  const path = account.user?.role ? roleRoutes[account.user.role] || [] : [...roleRoutes.user, ...roleRoutes.superadmin];
 
 
-                        <Route path="/profile/settings" component={UtilsTypography} />
-                        <Route path="/profile/assesments" component={Assesment} />
-                        <Route path="/profile/reports" component={Report} />
+  return (
+    <Route path={path}>
+      <MainLayout>
+        <Switch location={location} key={location.pathname}>
+          <AuthGuard>
+            <Route path="/dashboard" component={DashboardDefault} />
 
-                        <Route path="/sample-page" component={SamplePage} />
-                    </AuthGuard>
-                </Switch>
-            </MainLayout>
-        </Route>
-    );
+            {/* User Routes */}
+            <Route path="/profile/assesments" component={Assesment} />
+            <Route path="/profile/reports" component={Report} />
+
+            {/* Super Admin Routes */}
+            <Route path="/superadmin/jobs" component={Careers} />
+            <Route path="/superadmin/users" component={Superadminusers} />
+          </AuthGuard>
+        </Switch>
+      </MainLayout>
+    </Route>
+  );
 };
 
 export default MainRoutes;

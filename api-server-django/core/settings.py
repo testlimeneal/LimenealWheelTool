@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     "api.assessment",
     "api.user",
     "api.authentication",
+    "api.superadmin",
 ]
 
 MIDDLEWARE = [
@@ -217,3 +218,4 @@ TEST_RUNNER = "core.test_runner.CoreTestRunner"
 # ADMIN_REORDER = (
 #     {'app': 'assessment','label': 'Level1','models': ('assessment.Quiz',)},
 # )
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -11,6 +11,13 @@ import Routes from './routes';
 import theme from './themes';
 import { AxiosInterceptor } from './config/axios';
 
+import { PrimeReactProvider } from 'primereact/api';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';   // theme
+import 'primeflex/primeflex.css';                                   // css utility
+import 'primeicons/primeicons.css';
+import 'primereact/resources/primereact.css';   
+        
+
 // project imports
 import NavigationScroll from './layout/NavigationScroll';
 
@@ -21,6 +28,7 @@ const App = () => {
 
   return (
     <StyledEngineProvider injectFirst>
+      <PrimeReactProvider>
       <AxiosInterceptor>
         <ThemeProvider theme={theme(customization)}>
           <CssBaseline />
@@ -29,6 +37,7 @@ const App = () => {
           </NavigationScroll>
         </ThemeProvider>
       </AxiosInterceptor>
+      </PrimeReactProvider>
     </StyledEngineProvider>
   );
 };

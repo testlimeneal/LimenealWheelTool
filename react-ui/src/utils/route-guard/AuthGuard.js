@@ -12,7 +12,6 @@ import { Redirect } from 'react-router-dom';
 const AuthGuard = ({ children }) => {
     const account = useSelector((state) => state.account);
     const { isLoggedIn } = account;
-
     if (!isLoggedIn) {
         return <Redirect to="/login" />;
     }
