@@ -1,9 +1,6 @@
 api-server-django/api/assessment/reports/level1/
 api-server-django/api/assessment/reports/level2/
 api-server-django/api/assessment/reports/level3/
-api-server-django/api/assessment/migrations/
-api-server-django/api/superadmin/migrations/
-api-server-django/api/user/migrations/
 
 api-server-django/static/
 api-server-django/staticfiles/
