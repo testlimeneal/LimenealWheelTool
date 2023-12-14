@@ -323,10 +323,15 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         for count,job in enumerate(push_careers):
             replacements[cells[count]] = job.title
 
-        # top_three_labels = [i for i in data[0:3]]
+        top_three_labels = [i for i in data[0:3]]
         # top_three_roles = [LEVEL3_ROLES[i.lower()] for i in top_three_labels]
 
-        # middle_three_labels = [i for i in data[3:6]]
+        middle_three_labels = [i for i in data[3:6]]
+        cells = ('B','G','L')
+        for i in range(3):
+            replacements[f"{cells[i]}31"] = top_three_labels[i]
+            replacements[f"{cells[i]}61"] = middle_three_labels [i]
+
         # middle_three_roles = [LEVEL3_ROLES[i.lower()] for i in middle_three_labels]
 
         # power_sentence = f"Strong in {', '.join(top_three_labels[:-1])}, and {top_three_labels[-1]}, careers where you will find complete fulfilment will be where the inclination is to  {', '.join(top_three_roles[:-1])}, and {top_three_roles[-1]}"
@@ -351,7 +356,10 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         for count,job in enumerate(pain_careers):
             replacements[cells[count]] = job.title
         
-        # bottom_three_labels = [i for i in data[0:3]]
+        bottom_three_labels = [i for i in data[0:3]]
+        cells = ('B','G','L')
+        for i in range(3):
+            replacements[f"{cells[i]}31"] = bottom_three_labels[i]
         # bottom_three_roles = [LEVEL3_ROLES[i.lower()] for i in bottom_three_labels]
 
         # pain_sentence = f"Strong in {', '.join(bottom_three_labels[:-1])}, and {bottom_three_labels[-1]}, careers where you will find least fulfilment will be where the inclination is to  {', '.join(bottom_three_roles[:-1])}, and {bottom_three_roles[-1]}"
@@ -377,11 +385,38 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
             "Visualizer":"V12",
         }
 
+        values = {}
+
         for feature in data:
             replacements[rows[feature[0]]] = feature[1]
+            values[feature[0]] = feature[1]
         
+        # print(values)
+        def calculate_average(rating1, rating2):
+            return (values[rating1] + values[rating2]) / 2
+        averages = {
+            'S': calculate_average('Visualizer', 'Mentor'),
+            'A': calculate_average('Dominion', 'Charmer'),
+            'L': calculate_average('Guardian', 'Principal'),
+            'E': calculate_average('Angel', 'Binder'),
+            'M': calculate_average('Harmonizer', 'Mentor')
+        }
+        salem_cells = {
+            'S':'E51',
+            'A':'E55',
+            'L':'E58',
+            'E':'E61',
+            'M':'E64',
+        }
+        sorted_data = sorted(averages.items(), key=lambda x: x[1], reverse=True)
+        for i, (letter, value) in enumerate(sorted_data):
+            if i < 2:
+                replacements[salem_cells[letter]] = 'Power'
+            elif i < 4:
+                replacements[salem_cells[letter]] = 'Push'
+            else:
+                replacements[salem_cells[letter]] = 'Pain'
 
-         
         update_worksheet_cells(worksheet,replacements)
         
     return workbook
