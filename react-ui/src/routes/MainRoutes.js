@@ -60,6 +60,7 @@ const MainRoutes = () => {
       '/limeneal/clientadmin/users',
       '/limeneal/clientsubadmin/users',
       '/operator/admin',
+      '/talent/request',
       '/operator/clientadmin',
       '/operator/clientsubadmin',
     ],
