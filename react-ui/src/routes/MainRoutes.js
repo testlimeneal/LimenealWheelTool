@@ -68,7 +68,7 @@ const MainRoutes = () => {
 
   const path = account.user?.role
     ? roleRoutes[account.user.role] || []
-    : [...roleRoutes.user, ...roleRoutes.superadmin];
+    : [...roleRoutes.user, ...roleRoutes.superadmin, ...roleRoutes.admin];
 
   return (
     <Route path={path}>
