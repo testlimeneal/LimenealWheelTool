@@ -5,16 +5,16 @@ from rest_framework import status
 from api.superadmin.serializers.users import UserSerializer
 from api.user.models import User
 from rest_framework.permissions import IsAuthenticated
+from api.superadmin.tasks import generate_zip_file_async,add
 
-from api.superadmin.models import LimenealUser
+
+from api.superadmin.models import LimenealUser, AdminList, ClientAdminList, ClientSubAdminList
 from django.core.mail import send_mail
 import random
 import string
-import zipfile
-import tempfile
-import os
-from django.http import HttpResponse
-from api.assessment.helperfunctions.common import generate_report_file_path
+
+from django.http import HttpResponse, JsonResponse
+
 from api.assessment.models import UserProfile,UserResponse,Level2Response,Level3Response, ReportType
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -26,39 +26,48 @@ class CreateUserView(generics.CreateAPIView):
         return ''.join(random.choice(characters) for i in range(8))
 
     def create(self, request, *args, **kwargs):
-        # Generate a random password
         random_password = self.generate_random_password()
-
-        # Create a mutable copy of the QueryDict
         mutable_data = request.data.copy()
-
-        # Set the password in the mutable copy
         mutable_data['password'] = random_password
-
         serializer = self.get_serializer(data=mutable_data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer, random_password, request)
+        self.perform_create(serializer, random_password, request,mutable_data)
         
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def perform_create(self, serializer, password, request):
-        # Call the save method of the serializer to create the User object
+    def perform_create(self, serializer, password, request,mutable_data):
         user = serializer.save()
-
-        # Email the login credentials (For console logging purposes in this example)
         email_subject = "Your Login Credentials"
-        email_body = f"Username: {user.username}\nPassword: {password}"
+        type = mutable_data['type']
+        with open(r'C:\Freelancing\Paraclete\api-server-django\api\superadmin\views\page.html', 'r') as file:
+            email_body = file.read()
+            email_body = email_body.replace('{{username}}', user.email);
+            email_body = email_body.replace('{{password}}', password);
 
-        # Assuming you have an email field in your User model
-        send_mail(email_subject, email_body, 'from@example.com', [user.email])
+            send_mail(
+                subject=email_subject,
+                message='',  # Since you have HTML content, set message to an empty string
+                from_email="no-reply@limenealwheel.com",
+                recipient_list= ['panuj55@gmail.com'],
+                html_message=email_body,  # Include your HTML content here
+            )
+        if(type=='superadmin'):
+            LimenealUser.objects.create(user=user, super_admin=request.user, user_type='user')
+        elif(type=='admin'):
+            admin_instance = User.objects.get(id=mutable_data['admin_id'])
+            admin_user = LimenealUser.objects.get(user=admin_instance)
+            LimenealUser.objects.create(user=user, super_admin=admin_user.super_admin,admin=admin_instance, user_type='user')
+        elif(type=='clientadmin'):
+            admin_instance = User.objects.get(id=mutable_data['admin_id'])
+            admin_user = LimenealUser.objects.get(user=admin_instance)
+            LimenealUser.objects.create(user=user, super_admin=admin_user.super_admin,admin=admin_user.admin,client_admin=admin_instance, user_type='user')
+        elif(type=='clientsubadmin'):
+            admin_instance = User.objects.get(id=mutable_data['admin_id'])
+            admin_user = LimenealUser.objects.get(user=admin_instance)
+            LimenealUser.objects.create(user=user, super_admin=admin_user.super_admin,admin=admin_user.admin,client_admin=admin_user.client_admin,client_subadmin=admin_instance, user_type='user')
 
-        # Add the user to LimenealUser model with super_admin as request.user
-        LimenealUser.objects.create(user=user, super_admin=request.user, user_type='user')
-
-
-
-class UserListView(generics.ListAPIView):
+class UserListView(generics.ListAPIView):    
     permission_classes = [IsAuthenticated]
 
     def get_user_status(self,user):
@@ -119,38 +128,195 @@ class UserListView(generics.ListAPIView):
             })
 
         return Response(data)
-    
 
 
+
+class AdminListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        user = self.request.user
+
+        
+        queryset = LimenealUser.objects.filter(
+            user_type='operator',
+            super_admin=user,
+            admin__isnull=True,
+            client_admin__isnull=True,
+            client_subadmin__isnull=True
+        )
+
+        admin_lists = AdminList.objects.filter(user__in=queryset.values_list('user', flat=True))
+        result_array = []
+
+        for admin_list in admin_lists:
+            result_array.append({
+                'user_email': admin_list.user.email,
+                'user_username': admin_list.user.username,
+                'org_client_name': admin_list.org_client_name,
+                'address': admin_list.address,
+                'type_of_business': admin_list.type_of_business,
+                'pan_no': admin_list.pan_no,
+                'gst_no': admin_list.gst_no,
+                'uid': admin_list.uid,
+                'admin_name': admin_list.admin_name,
+                'admin_designation': admin_list.admin_designation,
+                'employment_status': admin_list.employment_status,
+                'admin_contact_details': admin_list.admin_contact_details,
+                'admin_address': admin_list.admin_address,
+                'admin_email_id': admin_list.admin_email_id,
+                'lp1': admin_list.lp1,
+                'lp2': admin_list.lp2,
+                'lp3': admin_list.lp3,
+                'ltb': admin_list.ltb,
+                'ltf': admin_list.ltf,
+                'user_id' : admin_list.user.id
+                # 'account_status': admin_list.account_status,
+            })
+        # print(result_array)
+        data = []
+        
+        return JsonResponse({"data" : result_array})
+
+
+class ClientAdminListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        user = self.request.user
+        user_id = self.kwargs.get('id')
+        
+        if user_id:
+            curr_admin = User.objects.get(id=user_id)
+            queryset = LimenealUser.objects.filter(
+                user_type='operator',
+                super_admin__isnull=False,
+                admin=curr_admin,
+                client_admin__isnull=True,
+                client_subadmin__isnull=True
+            )
+        else:
+            queryset = LimenealUser.objects.filter(
+            user_type='operator',
+            super_admin__isnull=False,
+            client_admin__isnull=True,
+            client_subadmin__isnull=True
+            )
+
+            if user.role == 'superadmin':
+                queryset = queryset.filter(admin__isnull=False)
+            else:
+                queryset = queryset.filter(admin=user)
+
+        admin_lists = ClientAdminList.objects.filter(user__in=queryset.values_list('user', flat=True))
+        result_array = []
+
+        for admin_list in admin_lists:
+            result_array.append({
+                'user_email': admin_list.user.email,
+                'user_username': admin_list.user.username,
+                'org_client_name': admin_list.org_client_name,
+                'address': admin_list.address,
+                'type_of_business': admin_list.type_of_business,
+                'pan_no': admin_list.pan_no,
+                'gst_no': admin_list.gst_no,
+                'uid': admin_list.uid,
+                'admin_name': admin_list.admin_name,
+                'admin_designation': admin_list.admin_designation,
+                'employment_status': admin_list.employment_status,
+                'admin_contact_details': admin_list.admin_contact_details,
+                'admin_address': admin_list.admin_address,
+                'admin_email_id': admin_list.admin_email_id,
+                'lp1': admin_list.lp1,
+                'lp2': admin_list.lp2,
+                'lp3': admin_list.lp3,
+                'ltb': admin_list.ltb,
+                'ltf': admin_list.ltf,
+                'user_id' : admin_list.user.id
+                # 'account_status': admin_list.account_status,
+            })
+        # print(result_array)
+        data = []
+        
+        return JsonResponse({"data" : result_array})
+
+class ClientSubAdminListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        user = self.request.user
+        user_id = self.kwargs.get('id')
+        
+        if user_id:
+            curr_clientadmin = User.objects.get(id=user_id)
+            queryset = LimenealUser.objects.filter(
+                user_type='operator',
+                super_admin__isnull=False,
+                admin__isnull=False,
+                client_admin=curr_clientadmin,
+                client_subadmin__isnull=True
+            )
+        else:
+            queryset = LimenealUser.objects.filter(
+            user_type='operator',
+            super_admin__isnull=False,
+            admin__isnull=False,
+            client_subadmin__isnull=True
+            )
+
+            if user.role == 'superadmin':
+                queryset = queryset.filter(client_admin__isnull=False)
+            else:
+                queryset = queryset.filter(client_admin=user)
+
+        admin_lists = ClientSubAdminList.objects.filter(user__in=queryset.values_list('user', flat=True))
+        result_array = []
+
+        for admin_list in admin_lists:
+            result_array.append({
+                'user_email': admin_list.user.email,
+                'user_username': admin_list.user.username,
+                'org_client_name': admin_list.org_client_name,
+                'address': admin_list.address,
+                'type_of_business': admin_list.type_of_business,
+                'pan_no': admin_list.pan_no,
+                'gst_no': admin_list.gst_no,
+                'uid': admin_list.uid,
+                'admin_name': admin_list.admin_name,
+                'admin_designation': admin_list.admin_designation,
+                'employment_status': admin_list.employment_status,
+                'admin_contact_details': admin_list.admin_contact_details,
+                'admin_address': admin_list.admin_address,
+                'admin_email_id': admin_list.admin_email_id,
+                'lp1': admin_list.lp1,
+                'lp2': admin_list.lp2,
+                'lp3': admin_list.lp3,
+                'ltb': admin_list.ltb,
+                'ltf': admin_list.ltf,
+                'user_id' : admin_list.user.id
+                # 'account_status': admin_list.account_status,
+            })
+        # print(result_array)
+        data = []
+        
+        return JsonResponse({"data" : result_array})
+
+
+from ..tasks import generate_zip_file
 class DownloadReportsView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         data = request.data
-        user_id = data.get('user_id',None)
-        reports = data.get('data',[])
+        user_id = data.get('user_id', None)
+        reports = data.get('data', [])
         report_ids = [i['id'] for i in reports]
+        processed = data.get('processed',False)
+        if not processed:
+            task = generate_zip_file_async.delay(user_id, report_ids)
+            return JsonResponse({"msg":f'Check Email for Requested {len(report_ids)} Reports of User-{user_id} '})
+
         zip_data, zip_file_name = generate_zip_file(user_id, report_ids)
-        
+
         response = HttpResponse(zip_data, content_type='application/zip')
         response['Content-Disposition'] = f'attachment; filename="{zip_file_name}"'
         return response
 
-def generate_zip_file(user_id, report_ids):
-    with tempfile.TemporaryDirectory() as temp_dir:
-        zip_file_path = os.path.join(temp_dir, 'reports.zip')
-        
-        with zipfile.ZipFile(zip_file_path, 'w') as zip_file:
-            for report_id in report_ids:
-                file_path = generate_report_file_path(user_id, report_id)
-                
-                if os.path.exists(file_path):
-                    with open(file_path, 'rb') as file:
-                        report_data = file.read()
-                        file_name = os.path.basename(file_path)
-                        zip_file.writestr(f'{report_id}/{file_name}', report_data)
-                else:
-                    raise FileNotFoundError(f"File not found: {file_path}")
-
-        with open(zip_file_path, 'rb') as zip_file:
-            zip_data = zip_file.read()
-
-        return zip_data, 'reports.zip'

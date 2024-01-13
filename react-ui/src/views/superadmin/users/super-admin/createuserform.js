@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import { Button, TextField, Container, Typography, Grid } from '@material-ui/core';
-import Axios from '../../../config/axios';
+import Axios from '../../../../config/axios';
 const CreateUserForm = (props) => {
   const {setValue} = props;
   const formik = useFormik({
@@ -13,7 +13,8 @@ const CreateUserForm = (props) => {
       // Implement your API call to create a new user here
       // You can use libraries like axios to make the API call
       // After the user is created, you can redirect or show a success message
-      const res = await Axios.post('superadmin/create-user/',values)
+      const payload = { ...values, type:'superadmin' };
+      const res = await Axios.post('superadmin/create-user/',payload)
       setValue(0)
     },
   });

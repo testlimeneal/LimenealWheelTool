@@ -10,6 +10,8 @@ import { Select, MenuItem, InputLabel } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Axios from '../../config/axios';
+import { Box, Tabs, Tab } from '@material-ui/core';
+import CreateJobForm from './admin/createjobform';
 
 export default function SuperAdminCareers() {
   const [careers, setCareers] = useState([]);
@@ -76,144 +78,84 @@ export default function SuperAdminCareers() {
       console.error('Error deleting career:', error.message);
     }
   };
+  const [value, setValue] = React.useState(1);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   const handleCancelDelete = () => {
     setOpenConfirmationDialog(false);
     setSelectedCareerId(null);
   };
   return (
-    <div className="card">
-      <Button variant="contained" color="primary" onClick={handleAddCareer} >
-        Add Career
-      </Button>
-
-      <DataTable
-        style={{ fontSize: '1em' }}
-        value={careers}
-        stripedRows
-        tableStyle={{ marginTop:10,minWidth: '50rem' }}
-        filterDisplay="row"
-        paginator
-        rows={15}
-      >
-        <Column field="title" header="Career Name" filter filterPlaceholder="Search by name"></Column>
-        <Column field="career_cluster.name" header="Career Cluster"></Column>
-        <Column field="lwdimension_field1.feature" header="LW 1"></Column>
-        <Column field="lwdimension_field2.feature" header="LW 2"></Column>
-        <Column field="lwdimension_field3.feature" header="LW 3"></Column>
-        <Column
-          body={(rowData) => (
-            <>
-              <Button onClick={() => handleDelete(rowData.id)} color="secondary">
-                Delete
+    <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+      <Tabs value={value} onChange={handleChange} centered>
+        <Tab label="Career List" />
+        <Tab label="Create Career" />
+        
+      </Tabs>
+      <TabPanel value={value} index={0}>
+        <div className="card">
+          <DataTable
+            style={{ fontSize: '1em' }}
+            value={careers}
+            stripedRows
+            tableStyle={{ marginTop: 10, minWidth: '50rem' }}
+            filterDisplay="row"
+            paginator
+            rows={15}
+          >
+            <Column field="title" header="Career Name" filter filterPlaceholder="Search by name"></Column>
+            <Column field="career_cluster.name" header="Career Cluster"></Column>
+            <Column field="lwdimension_field1.feature" header="LW 1"></Column>
+            <Column field="lwdimension_field2.feature" header="LW 2"></Column>
+            <Column field="lwdimension_field3.feature" header="LW 3"></Column>
+            <Column
+              body={(rowData) => (
+                <>
+                  <Button onClick={() => handleDelete(rowData.id)} color="secondary">
+                    Delete
+                  </Button>
+                </>
+              )}
+            />
+          </DataTable>
+          <Dialog
+            open={openConfirmationDialog}
+            onClose={handleCancelDelete}
+            fullWidth
+            aria-labelledby="confirmation-dialog-title"
+          >
+            <DialogTitle id="confirmation-dialog-title">Confirm Delete</DialogTitle>
+            <DialogContent>
+              <p>Are you sure you want to delete this career?</p>
+              <strong>Will affect the reports generated</strong>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCancelDelete} color="primary">
+                Cancel
               </Button>
-            </>
-          )}
-        />
-      </DataTable>
-      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Add New Career</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="title"
-            name="title"
-            label="Career Name"
-            type="text"
-            fullWidth
-            value={newCareer.title}
-            onChange={handleInputChange}
-          />
-          <InputLabel htmlFor="career_cluster_id">Career Cluster</InputLabel>
-          <Select
-            id="career_cluster_id"
-            name="career_cluster_id"
-            label="LW 1"
-            value={newCareer.career_cluster}
-            onChange={handleInputChange}
-            fullWidth
-          >
-            {clusters.map((cluster) => (
-              <MenuItem key={cluster.id} value={cluster.id}>
-                {cluster.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <InputLabel htmlFor="lwdimension_field1_id">LW Dimension 1</InputLabel>
-          <Select
-            id="lwdimension_field1_id"
-            name="lwdimension_field1_id"
-            label="LW 1"
-            value={newCareer.lwdimension_field1_id}
-            onChange={handleInputChange}
-            fullWidth
-          >
-            {bucket.map((cluster) => (
-              <MenuItem key={cluster.id} value={cluster.id}>
-                {cluster.feature}
-              </MenuItem>
-            ))}
-          </Select>
-          <InputLabel htmlFor="lwdimension_field2_id">LW Dimension 2</InputLabel>
-          <Select
-            id="lwdimension_field2_id"
-            name="lwdimension_field2_id"
-            label="LW 2"
-            value={newCareer.lwdimension_field2_id}
-            onChange={handleInputChange}
-            fullWidth
-          >
-            {bucket.map((cluster) => (
-              <MenuItem key={cluster.id} value={cluster.id}>
-                {cluster.feature}
-              </MenuItem>
-            ))}
-          </Select>
-          <InputLabel htmlFor="lwdimension_field3_id">LW Dimension 3</InputLabel>
-          <Select
-            id="lwdimension_field3_id"
-            name="lwdimension_field3_id"
-            label="LW 3"
-            value={newCareer.lwdimension_field3_id}
-            onChange={handleInputChange}
-            fullWidth
-          >
-            {bucket.map((cluster) => (
-              <MenuItem key={cluster.id} value={cluster.id}>
-                {cluster.feature}
-              </MenuItem>
-            ))}
-          </Select>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} color="primary">
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={openConfirmationDialog}
-        onClose={handleCancelDelete}
-        fullWidth
-        aria-labelledby="confirmation-dialog-title"
-      >
-        <DialogTitle id="confirmation-dialog-title">Confirm Delete</DialogTitle>
-        <DialogContent>
-          <p>Are you sure you want to delete this career?</p><strong>Will affect the reports generated</strong>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleConfirmDelete} color="secondary">
-            Confirm Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+              <Button onClick={handleConfirmDelete} color="secondary">
+                Confirm Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+      <CreateJobForm />
+      </TabPanel>
+    </Box>
+  );
+}
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Box role="tabpanel" hidden={value !== index} id={`tabpanel-${index}`} aria-labelledby={`tab-${index}`} {...other}>
+      {value === index && <Box padding={5}>{children}</Box>}
+    </Box>
   );
 }

@@ -77,6 +77,9 @@ INSTALLED_APPS = [
     "api.user",
     "api.authentication",
     "api.superadmin",
+    # 'django_celery_results',
+    # 'celery',
+    #  'kombu.transport.django'
 ]
 
 MIDDLEWARE = [
@@ -218,4 +221,16 @@ TEST_RUNNER = "core.test_runner.CoreTestRunner"
 # ADMIN_REORDER = (
 #     {'app': 'assessment','label': 'Level1','models': ('assessment.Quiz',)},
 # )
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtpout.secureserver.net'
+EMAIL_HOST_USER='no-reply@limenealwheel.com'
+EMAIL_HOST_PASSWORD='limeneal@2023'
+DEFAULT_FROM_EMAIL='no-reply@limenealwheel.com' 
+EMAIL_PORT=465
+EMAIL_USE_SSL=True 
+EMAIL_USE_TLS=False
+
+# CELERY_BROKER_URL = 'pyamqp://guest:guest@localhost:5672'  # Use the correct URL for your chosen broker
+# CELERY_RESULT_BACKEND = 'django-db'
+# CELERY_CACHE_BACKEND = 'django-cache'

@@ -16,6 +16,10 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';   // theme
 import 'primeflex/primeflex.css';                                   // css utility
 import 'primeicons/primeicons.css';
 import 'primereact/resources/primereact.css';   
+
+import { ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
         
 
 // project imports
@@ -34,10 +38,12 @@ const App = () => {
           <CssBaseline />
           <NavigationScroll>
             <Routes />
+            <ToastContainer />
           </NavigationScroll>
         </ThemeProvider>
       </AxiosInterceptor>
       </PrimeReactProvider>
+      
     </StyledEngineProvider>
   );
 };

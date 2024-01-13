@@ -2,8 +2,10 @@ import * as React from 'react';
 
 
 import { Box,Tabs,Tab } from '@material-ui/core';
-import CreateUserForm from './users/createuserform';
-import UsersDataTable from './users/usersdatatable'
+// import CreateUserForm from './users/createuserform';
+import CreateAdminForm from './clientadmin/createadminform';
+// import UsersDataTable from './users/usersdatatable'
+import AdminDataTable from './clientadmin/admindatatable';
 
 export default function SuperAdminUsers() {
   const [value, setValue] = React.useState(0);
@@ -15,15 +17,15 @@ export default function SuperAdminUsers() {
   return (
     <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
       <Tabs value={value} onChange={handleChange} centered>
-        <Tab label="User List" />
-        <Tab label="Create User" />
+        <Tab label="Client Admins" />
+        <Tab label="Create Client-Admin" />
         
       </Tabs>
       <TabPanel value={value} index={0}>
-        <UsersDataTable/>
+        <AdminDataTable />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <CreateUserForm setValue={setValue}/>
+        <CreateAdminForm setValue={setValue}/>
       </TabPanel>
     </Box>
   );

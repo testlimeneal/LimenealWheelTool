@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import Axios from '../../../config/axios';
+import Axios from '../../../../config/axios';
 import { Chip,Button } from '@material-ui/core';
+import {  toast } from 'react-toastify';
+
 
 const HelloWorld = () => {
   const [users, setUsers] = useState([]);
@@ -45,9 +47,26 @@ const HelloWorld = () => {
   };
   const handleDownload = async(user_id) => {
     console.log(user_id)
+    
     const hasNotProcessed = selectedRows.some(item => item.status === "Not Processed");
     const payload = {user_id,processed:!hasNotProcessed,data: selectedRows}
-    const res = Axios.post('superadmin/download_reports/',payload)
+    const responseType = hasNotProcessed ? 'json' : 'blob';
+
+    const res = await Axios.post('superadmin/download_reports/',payload, {
+      responseType,
+    })
+    if (!hasNotProcessed) {
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'your-filename.zip');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      console.log(res.data)
+      toast(res.data.msg,{ autoClose: 7000 });
+    }
     // console.log(hasNotProcessed)
     // console.log('Selected Rows for Download:', temp);
     setExpandedRows([]);

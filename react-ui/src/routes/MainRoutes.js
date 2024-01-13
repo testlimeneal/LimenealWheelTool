@@ -22,7 +22,14 @@ const Assesment = Loadable(lazy(() => import('../views/assesment')));
 const Report = Loadable(lazy(() => import('../views/profile/reports')));
 
 const Careers = Loadable(lazy(() => import('../views/superadmin/careers')));
-const Superadminusers = Loadable(lazy(() => import('../views/superadmin/users')));
+const Superadminusers = Loadable(lazy(() => import('../views/superadmin/users/super-admin/users')));
+const Adminusers = Loadable(lazy(() => import('../views/superadmin/users/admin/users')));
+const ClientAdminusers = Loadable(lazy(() => import('../views/superadmin/users/client-admin/users')));
+const ClientSubAdminusers = Loadable(lazy(() => import('../views/superadmin/users/client-subadmin/users')));
+
+const AdminOperators = Loadable(lazy(() => import('../views/superadmin/admin')));
+const ClientAdminOperators = Loadable(lazy(() => import('../views/superadmin/clientadmin')));
+const ClientSubAdminOperators = Loadable(lazy(() => import('../views/superadmin/clientsubadmin')));
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('../views/sample-page')));
 
@@ -34,12 +41,33 @@ const MainRoutes = () => {
 
   const roleRoutes = {
     user: ['/dashboard', '/profile/assesments', '/profile/settings', '/profile/reports'],
-    superadmin: ['/dashboard', '/superadmin/jobs', '/superadmin/users'],
-    // Add more roles and their corresponding routes as needed
+    superadmin: [
+      '/dashboard',
+      '/superadmin/jobs',
+      '/limeneal/superadmin/users',
+      '/limeneal/admin/users',
+      '/limeneal/clientadmin/users',
+      '/limeneal/clientsubadmin/users',
+      '/operator/admin',
+      '/operator/clientadmin',
+      '/operator/clientsubadmin',
+    ],
+    admin: [
+      '/dashboard',
+      '/superadmin/jobs',
+      '/limeneal/superadmin/users',
+      '/limeneal/admin/users',
+      '/limeneal/clientadmin/users',
+      '/limeneal/clientsubadmin/users',
+      '/operator/admin',
+      '/operator/clientadmin',
+      '/operator/clientsubadmin',
+    ],
   };
-  
-  const path = account.user?.role ? roleRoutes[account.user.role] || [] : [...roleRoutes.user, ...roleRoutes.superadmin];
 
+  const path = account.user?.role
+    ? roleRoutes[account.user.role] || []
+    : [...roleRoutes.user, ...roleRoutes.superadmin];
 
   return (
     <Route path={path}>
@@ -54,7 +82,13 @@ const MainRoutes = () => {
 
             {/* Super Admin Routes */}
             <Route path="/superadmin/jobs" component={Careers} />
-            <Route path="/superadmin/users" component={Superadminusers} />
+            <Route path="/limeneal/superadmin/users" component={Superadminusers} />
+            <Route path="/limeneal/admin/users" component={Adminusers} />
+            <Route path="/limeneal/clientadmin/users" component={ClientAdminusers} />
+            <Route path="/limeneal/clientsubadmin/users" component={ClientSubAdminusers} />
+            <Route path="/operator/admin" component={AdminOperators} />
+            <Route path="/operator/clientadmin" component={ClientAdminOperators} />
+            <Route path="/operator/clientsubadmin" component={ClientSubAdminOperators} />
           </AuthGuard>
         </Switch>
       </MainLayout>

@@ -49,8 +49,8 @@ def generate_report_file_path(user_id, report_id):
         file_path = user_profile.file_paths.get(str(report_id), None) or process_level2_career_report(user_id, report_id)
         # file_path = process_level2_career_report(user_id, report_id)
     elif "Level 3" in report.level and "Career" in report.report_type:
-        file_path = user_profile.file_paths.get(str(report_id), None) or process_level3_career_report(user_id, report_id)
-        # file_path =  process_level3_career_report(user_id, report_id)
+        # file_path = user_profile.file_paths.get(str(report_id), None) or process_level3_career_report(user_id, report_id)
+        file_path =  process_level3_career_report(user_id, report_id)
 
     return file_path
 def generate_report(file_path):
@@ -78,7 +78,7 @@ def generate_report_zip(user_profile_id):
             with ZipFile(temp_file, 'w') as zip_file:
                 for i,(file_path,file_name) in enumerate(file_paths):
                     file_namee = os.path.basename(file_path)
-                    print(file_namee)
+                    # print(file_namee)
                     zip_file.write(file_path, arcname=file_name+".pdf")
             temp_file.seek(0)
 

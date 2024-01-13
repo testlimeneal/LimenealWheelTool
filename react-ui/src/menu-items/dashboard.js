@@ -31,26 +31,26 @@ export const superadmin_dashboard = {
     type: 'group',
     children: [
         {
-            id: 'createuser',
+            id: 'createadminuser',
             title: 'Admin Acess',
             type: 'item',
-            url: '/dashboard',
+            url: '/operator/admin',
             icon: icons['IconDashboard'],
             breadcrumbs: false
         },
         {
-            id: 'createuser',
+            id: 'createclientadminuser',
             title: 'Client-Admin Acess',
             type: 'item',
-            url: '/dashboard',
+            url: '/operator/clientadmin',
             icon: icons['IconDashboard'],
             breadcrumbs: false
         },
         {
-            id: 'createuser',
+            id: 'createsubadminuser',
             title: 'Client Sub-Admin Acess',
             type: 'item',
-            url: '/dashboard',
+            url: '/operator/clientsubadmin',
             icon: icons['IconDashboard'],
             breadcrumbs: false
         }

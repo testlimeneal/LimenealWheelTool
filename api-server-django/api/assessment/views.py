@@ -152,7 +152,7 @@ class Level2ResponseAPIView(APIView):
             for i in nlp:
                 nlp_count[i.nlp] = nlp_count.get(i.nlp, 0) + 1
             # print(nlp_count)
-            print(dimmensions_count)
+            # print(dimmensions_count)
 
             serializer = Level2ResponseSerializer(responses, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -276,7 +276,7 @@ class Level3ResponseAPIView(APIView):
             
             dimensions = {}
             for response in responses:
-                print(response.rank)
+                # print(response.rank)
                 dimensions[response.answer.dimension.id] = dimensions.get(response.answer.dimension.id, {})
                 dimensions[response.answer.dimension.id][response.answer.name] = dimensions.get(response.answer.dimension.id, {}).get(response.answer.name, 0) + response.rank
             

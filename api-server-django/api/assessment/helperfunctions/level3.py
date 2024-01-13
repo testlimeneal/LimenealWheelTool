@@ -40,6 +40,7 @@ def process_level3_scores(user_id):
     
 
     total_values = {}
+
     for outer_key, inner_dict in dimensions.items():
         total_value = 0
         for inner_key, inner_data in inner_dict.items():
@@ -52,6 +53,9 @@ def process_level3_scores(user_id):
     
     result_dict = {item["id"]: item["value"] for sublist in level2_scores for item in sublist}
     percentage_dict = {key: (value / 94 * 100) for key, value in total_values.items()}
+    # print(dimensions)
+    # print(total_values)
+    # print(percentage_dict)
 
     result_list = []
 
