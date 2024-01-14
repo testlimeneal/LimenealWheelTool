@@ -55,6 +55,9 @@ const HelloWorld = () => {
     const res = await Axios.post('superadmin/download_reports/',payload, {
       responseType,
     })
+
+    console.log(res,"Response")
+    
     if (!hasNotProcessed) {
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');

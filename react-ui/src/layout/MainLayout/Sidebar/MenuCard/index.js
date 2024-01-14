@@ -75,7 +75,7 @@ const UpgradePlanCard = () => {
           <Grid item>
             <Stack direction="row">
               <AnimateButton>
-                {account && account.user.role === 'user' ? (
+                {account & account.user && account.user.role === 'user' ? (
                   <Button
                     component={Link}
                     href="/profile/assesments"

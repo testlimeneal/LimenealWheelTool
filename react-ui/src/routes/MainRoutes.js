@@ -30,6 +30,8 @@ const ClientSubAdminusers = Loadable(lazy(() => import('../views/superadmin/user
 const AdminOperators = Loadable(lazy(() => import('../views/superadmin/admin')));
 const ClientAdminOperators = Loadable(lazy(() => import('../views/superadmin/clientadmin')));
 const ClientSubAdminOperators = Loadable(lazy(() => import('../views/superadmin/clientsubadmin')));
+
+const TalentCareers = Loadable(lazy(() => import('../views/talent/careers')));
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('../views/sample-page')));
 
@@ -63,6 +65,7 @@ const MainRoutes = () => {
       '/talent/request',
       '/operator/clientadmin',
       '/operator/clientsubadmin',
+      '/operator/talent/request',
     ],
   };
 
@@ -90,6 +93,9 @@ const MainRoutes = () => {
             <Route path="/operator/admin" component={AdminOperators} />
             <Route path="/operator/clientadmin" component={ClientAdminOperators} />
             <Route path="/operator/clientsubadmin" component={ClientSubAdminOperators} />
+
+            {/* Talent Routes */}
+            <Route path="/operator/talent/request" component={TalentCareers} />
           </AuthGuard>
         </Switch>
       </MainLayout>
