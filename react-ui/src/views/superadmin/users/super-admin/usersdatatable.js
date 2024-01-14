@@ -56,7 +56,6 @@ const HelloWorld = () => {
       responseType,
     })
 
-    console.log(res,"Response")
     
     if (!hasNotProcessed) {
       const url = window.URL.createObjectURL(new Blob([res.data]));
