@@ -6,7 +6,7 @@ from api.superadmin.serializers.users import UserSerializer
 from api.user.models import User
 from rest_framework.permissions import IsAuthenticated
 from api.superadmin.tasks import generate_zip_file_async,add
-
+from api.superadmin.views.contants import get_html_path
 
 from api.superadmin.models import LimenealUser, AdminList, ClientAdminList, ClientSubAdminList
 from django.core.mail import send_mail
@@ -40,7 +40,7 @@ class CreateUserView(generics.CreateAPIView):
         user = serializer.save()
         email_subject = "Your Login Credentials"
         type = mutable_data['type']
-        with open(r'C:\Freelancing\Paraclete\api-server-django\api\superadmin\views\page.html', 'r') as file:
+        with open(get_html_path('page.html'), 'r') as file:
             email_body = file.read()
             email_body = email_body.replace('{{username}}', user.email);
             email_body = email_body.replace('{{password}}', password);

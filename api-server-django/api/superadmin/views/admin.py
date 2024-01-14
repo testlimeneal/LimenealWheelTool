@@ -6,6 +6,7 @@ from api.user.models import User
 from rest_framework.permissions import IsAuthenticated
 from api.superadmin.tasks import generate_zip_file_async,add
 from django.conf import settings
+from api.superadmin.views.contants import get_html_path
 
 
 from api.superadmin.models import LimenealUser,AdminList, ClientAdminList, ClientSubAdminList
@@ -45,7 +46,7 @@ class CreateAdminView(generics.CreateAPIView):
         # email_msg = EmailMessage(email_subject, email_body, settings.EMAIL_HOST_USER, [settings.EMAIL_HOST_USER], reply_to=['panuj55@gmail.com'])
         # email_msg.send()
 
-        with open(r'C:\Freelancing\Paraclete\api-server-django\api\superadmin\views\page.html', 'r') as file:
+        with open(get_html_path('page.html'), 'r') as file:
             email_body = file.read()
             email_body = email_body.replace('{{username}}', user.email);
             email_body = email_body.replace('{{password}}', password);
@@ -118,7 +119,7 @@ class CreateClientAdminView(generics.CreateAPIView):
         # email_msg.send()
 
         mutable_data = request.data.copy()
-        with open(r'C:\Freelancing\Paraclete\api-server-django\api\superadmin\views\page.html', 'r') as file:
+        with open(get_html_path('page.html'), 'r') as file:
             email_body = file.read()
             email_body = email_body.replace('{{username}}', user.email);
             email_body = email_body.replace('{{password}}', password);
@@ -195,7 +196,7 @@ class CreateClientSubAdminView(generics.CreateAPIView):
         # email_msg.send()
 
         mutable_data = request.data.copy()
-        with open(r'C:\Freelancing\Paraclete\api-server-django\api\superadmin\views\page.html', 'r') as file:
+        with open(get_html_path('page.html'), 'r') as file:
             email_body = file.read()
             email_body = email_body.replace('{{username}}', user.email);
             email_body = email_body.replace('{{password}}', password);
