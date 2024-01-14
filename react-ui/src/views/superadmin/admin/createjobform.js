@@ -36,7 +36,7 @@ function CreateJobForm() {
 
   const [step, setStep] = useState(1);
   const [careerName, setCareerName] = useState('');
-  const [activities, setActivities] = useState('ASssssss\nSjjjjjjj');
+  const [activities, setActivities] = useState('');
   const [activitiesList, setActivitiesList] = useState([]);
   useEffect(async () => {
     if (step === 2) {
