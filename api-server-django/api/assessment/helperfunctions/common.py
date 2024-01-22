@@ -4,6 +4,8 @@ from api.assessment.models import Bucket, Job, UserProfile, ReportType
 import os
 from django.core.files.temp import NamedTemporaryFile
 from zipfile import ZipFile
+from itertools import permutations
+
 
 
 def get_feature_name_by_id(feature_id):
@@ -14,14 +16,21 @@ def get_feature_name_by_id(feature_id):
         return None
 
 
-def get_careers_from_dimmensions(dimmensions,count = 5):
-    top_jobs = Job.objects.filter(
-        lwdimension_field1__feature=dimmensions[0],
-        lwdimension_field2__feature=dimmensions[1],
-        lwdimension_field3__feature=dimmensions[2]
-    )[0:count]
+def get_careers_from_dimmensions(dimensions,count = 5):
+    dimension_permutations = list(set(permutations(dimensions, len(dimensions))))
 
-    return top_jobs
+    all_top_jobs = []
+    for perm in dimension_permutations:
+        top_jobs = Job.objects.filter(
+            lwdimension_field1__feature=perm[0],
+            lwdimension_field2__feature=perm[1],
+            lwdimension_field3__feature=perm[2]
+        )[:count]
+
+        # Add the top jobs to the list
+        all_top_jobs.extend(top_jobs)
+
+    return all_top_jobs[:count]
         
 
 
