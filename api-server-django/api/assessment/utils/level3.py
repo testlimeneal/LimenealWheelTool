@@ -315,9 +315,12 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         power_careers = get_careers_from_dimmensions(data[0:3])
         push_careers = get_careers_from_dimmensions(data[3:6])
 
-        cells=('B31', 'B41', 'H38', 'H41', 'M38')
+
+        cells=('B38', 'B41', 'H38', 'H41', 'M38')
         for count,job in enumerate(power_careers):
             replacements[cells[count]] = job.title
+            print(cells[count],job.title)
+        
         
         cells=('B68', 'B71', 'H68', 'H71', 'M68')
         for count,job in enumerate(push_careers):
@@ -352,7 +355,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
 
         pain_careers = get_careers_from_dimmensions(data[0:3])
                         
-        cells=('B31', 'B41', 'H38', 'H41', 'M38')
+        cells=('B38', 'B41', 'H38', 'H41', 'M38')
         for count,job in enumerate(pain_careers):
             replacements[cells[count]] = job.title
         
