@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework import routers 
 from api.superadmin.views.careers import JobListCreateView, JobDetailView, CareerClusterAndBucketListView,GetDimensionsView
-from api.superadmin.views.users import CreateUserView, UserListView, DownloadReportsView, AdminListView,AdminListView, ClientAdminListView, ClientSubAdminListView
+from api.superadmin.views.users import CreateUserView, UserListView, DownloadReportsView,DownloadLimenealScoresView, AdminListView,AdminListView, ClientAdminListView, ClientSubAdminListView
 from api.superadmin.views.admin import CreateAdminView, CreateClientAdminView, CreateClientSubAdminView
 router = routers.SimpleRouter(trailing_slash=False)
 # router.register(r'quizzes', QuizViewSet)
@@ -37,5 +37,6 @@ urlpatterns = [
     # Other URLs
     path('get-dimensions/', GetDimensionsView.as_view(), name='get-dimensions'),
     path('download_reports/', DownloadReportsView.as_view(), name='download_reports'),
+    path('download_scores/', DownloadLimenealScoresView.as_view(), name='download_limeneal_scores'),
 ]
 

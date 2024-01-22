@@ -34,6 +34,7 @@ function addKeyValueToObjects(array, key, value) {
 function CreateJobForm() {
   const [forceUpdate, setForceUpdate] = useState(false);
 
+
   const [step, setStep] = useState(1);
   const [careerName, setCareerName] = useState('');
   const [activities, setActivities] = useState('');
@@ -52,7 +53,7 @@ function CreateJobForm() {
           // Dimension information
           resultObject[`${dimensionKey}_name`] = item.bucket.feature;
           resultObject[`${dimensionKey}_id`] = item.bucket.id;
-          resultObject[`${dimensionKey}_value`] = 0;
+          // resultObject[`${dimensionKey}_value`] = 0;
 
           // Virtue information
           resultObject[`${dimensionKey}_virtue`] = item.virtue.virtue;
@@ -87,6 +88,14 @@ function CreateJobForm() {
 
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
+
+  const[validstep2,setValidStep2] = useState(true)
+
+  
+
+  
+
+  
 
   const rowData = activitiesList[0];
   const headerGroup = (
@@ -222,7 +231,26 @@ function CreateJobForm() {
         break;
     }
     const temp = activitiesList;
-    // setActivitiesList(temp);
+    
+
+    setActivitiesList(temp);
+    const isAnyValueZero = () => {
+      for (const item of temp) {
+        for (const key in item) {
+          if (key.endsWith('_value') && item[key] === 0) {
+            return true;
+          }
+          
+
+          
+        }
+      }
+      return false;
+      
+    };
+    console.log(temp)
+    setValidStep2(isAnyValueZero)
+
     setForceUpdate((prev) => !prev);
   };
 
@@ -250,7 +278,7 @@ function CreateJobForm() {
               sx={{ marginBottom: 2 }}
             />
 
-            <Button variant="contained" onClick={nextStep}>
+            <Button variant="contained" onClick={nextStep} disabled={careerName === '' || activities.length === 0}>
               Next
             </Button>
           </Box>
@@ -293,14 +321,15 @@ function CreateJobForm() {
                 />,
               ])}
           </DataTable>
-          <Button variant="contained" onClick={nextStep}>
+          <Button variant="contained" disabled={validstep2} onClick={()=>nextStep()} >
             Next
           </Button>
         </Box>
       );
 
     // Add more cases for additional steps if needed
-
+    case 3:
+      return <>Step3</>
     default:
       return null;
   }

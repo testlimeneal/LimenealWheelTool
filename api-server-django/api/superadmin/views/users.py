@@ -7,13 +7,13 @@ from api.user.models import User
 from rest_framework.permissions import IsAuthenticated
 from api.superadmin.tasks import generate_zip_file_async,add
 from api.superadmin.views.contants import get_html_path
-
+from api.superadmin.helperfunctions.scores import generate_excel_report
 from api.superadmin.models import LimenealUser, AdminList, ClientAdminList, ClientSubAdminList
 from django.core.mail import send_mail
 import random
 import string
-
-from django.http import HttpResponse, JsonResponse
+import os
+from django.http import HttpResponse, JsonResponse, FileResponse
 
 from api.assessment.models import UserProfile,UserResponse,Level2Response,Level3Response, ReportType
 class CreateUserView(generics.CreateAPIView):
@@ -320,3 +320,37 @@ class DownloadReportsView(generics.GenericAPIView):
         response['Content-Disposition'] = f'attachment; filename="{zip_file_name}"'
         return response
 
+
+
+class DownloadLimenealScoresView(generics.GenericAPIView):
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        user_id = data.get('user_id', None)
+
+        
+        file_path = generate_excel_report(user_id)
+        print(file_path)
+        if os.path.exists(file_path):
+            # Read the file content
+            with open(file_path, 'rb') as file:
+                file_content = file.read()
+            from io import BytesIO
+
+            # Create a BytesIO object from the content
+            file_stream = BytesIO(file_content)
+
+            # Create a response with the file content
+            response = FileResponse(file_stream)
+            # Set the content type for the response
+            response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            # Set the content disposition to trigger a download box
+            response['Content-Disposition'] = f'attachment; filename={os.path.basename(file_path)}'
+            response['file-name'] = f'Anuj'
+
+            # Delete the file after sending the response
+            os.remove(file_path)
+
+            return response
+        else:
+            # Handle the case where the file does not exist
+            return Response({'error': 'File not found'}, status=status.HTTP_404_NOT_FOUND)
