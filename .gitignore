@@ -7,5 +7,7 @@ api-server-django/static/
 api-server-django/staticfiles/
 api-server-django/build/
 
+api-server-django/core/.env
+
 
 api-server-django/db_dev.sqlite3

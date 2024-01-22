@@ -4,7 +4,7 @@ from rest_framework import status
 from api.superadmin.serializers.users import UserSerializer
 from api.user.models import User
 from rest_framework.permissions import IsAuthenticated
-from api.superadmin.tasks import generate_zip_file_async,add
+from api.superadmin.tasks import generate_zip_file_async
 from django.conf import settings
 from api.superadmin.views.contants import get_html_path
 

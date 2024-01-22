@@ -34,16 +34,12 @@ def generate_zip_file(user_id, report_ids):
         return zip_data, 'reports.zip'
 
 @shared_task
-def add(x,y):
-    return x+y
-
-@shared_task
 def generate_zip_file_async(user_id, report_ids):
 
     temp = generate_zip_file(user_id, report_ids)
 
-    email_subject = "Your Login Credentials"
+    email_subject = "Checkout Limeneal Report!"
     email_body = f"Requested {len(report_ids)} Reports of User-{user_id} is ready to download"
-    send_mail(email_subject, email_body, settings.EMAIL_HOST_USER, ['panuj55@gmail.com'])
+    send_mail(email_subject, email_body, settings.EMAIL_HOST_USER, [settings.SYSTEM_EMAIL])
 
     return "Done"

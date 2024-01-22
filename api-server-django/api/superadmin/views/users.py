@@ -5,7 +5,7 @@ from rest_framework import status
 from api.superadmin.serializers.users import UserSerializer
 from api.user.models import User
 from rest_framework.permissions import IsAuthenticated
-from api.superadmin.tasks import generate_zip_file_async,add
+from api.superadmin.tasks import generate_zip_file_async
 from api.superadmin.views.contants import get_html_path
 from api.superadmin.helperfunctions.scores import generate_excel_report
 from api.superadmin.models import LimenealUser, AdminList, ClientAdminList, ClientSubAdminList
@@ -14,6 +14,8 @@ import random
 import string
 import os
 from django.http import HttpResponse, JsonResponse, FileResponse
+from django.conf import settings
+
 
 from api.assessment.models import UserProfile,UserResponse,Level2Response,Level3Response, ReportType
 class CreateUserView(generics.CreateAPIView):
@@ -49,7 +51,7 @@ class CreateUserView(generics.CreateAPIView):
                 subject=email_subject,
                 message='',  # Since you have HTML content, set message to an empty string
                 from_email="no-reply@limenealwheel.com",
-                recipient_list= ['panuj55@gmail.com'],
+                recipient_list= [settings.SYSTEM_EMAIL],
                 html_message=email_body,  # Include your HTML content here
             )
         if(type=='superadmin'):

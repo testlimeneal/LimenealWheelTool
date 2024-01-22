@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os, environ
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 env = environ.Env(
     # set casting, default value
@@ -230,6 +233,9 @@ DEFAULT_FROM_EMAIL='no-reply@limenealwheel.com'
 EMAIL_PORT=465
 EMAIL_USE_SSL=True 
 EMAIL_USE_TLS=False
+
+
+SYSTEM_EMAIL = env("SYSTEM_EMAIL", default=None)
 
 # CELERY_BROKER_URL = 'pyamqp://guest:guest@localhost:5672'  # Use the correct URL for your chosen broker
 # CELERY_RESULT_BACKEND = 'django-db'
