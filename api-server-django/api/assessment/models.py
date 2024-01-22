@@ -238,7 +238,7 @@ class UserProfile(models.Model):
     report_paid = models.ManyToManyField(ReportType, related_name='report_paid', null=True, blank=True)
     goals = models.CharField(max_length=255)
 
-    file_paths = models.JSONField(default=dict)
+    file_paths = models.JSONField(blank=True,default=dict)
     level1 = models.JSONField(null=True, blank=True)
     level2 = models.JSONField(null=True, blank=True)
     level3 = models.JSONField(null=True, blank=True)
