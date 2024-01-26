@@ -42,7 +42,7 @@ const Level3Bucket = ({ columns, onDragEnd, optionsColumns, otherColumns, setCol
                                                                         padding: 12,
                                                                         margin: '0 8px 0 0',
                                                                         minWidth: '100px',
-                                                                        backgroundColor: snapshot.isDragging ? '#263B4A' : 'white',
+                                                                        backgroundColor: snapshot.isDragging ? 'white' : 'white',
                                                                         color: 'purple',
                                                                         margin: 2,
                                                                         ...provided.draggableProps.style

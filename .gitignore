@@ -4,6 +4,7 @@ api-server-django/api/assessment/reports/level3/
 api-server-django/temp_folder/
 
 api-server-django/static/
+
 api-server-django/staticfiles/
 api-server-django/build/
 

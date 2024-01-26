@@ -46,8 +46,10 @@ DEBUG = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
 STATICFILES_DIRS = (
-    "C:\\LimenealWheelTool\\api-server-django\\build\\static",
+    os.path.join(BASE_DIR, 'build','static'),
 )
 
 MEDIA_URL = '/media/'
@@ -232,7 +234,7 @@ if EMAIL_BACKEND == 'django.core.mail.backends.smtp.EmailBackend':
     EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 465))
     EMAIL_USE_SSL=True 
     EMAIL_USE_TLS=False
-    
+
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
