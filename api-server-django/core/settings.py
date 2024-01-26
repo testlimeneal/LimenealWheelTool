@@ -222,6 +222,8 @@ TEST_RUNNER = "core.test_runner.CoreTestRunner"
 #     {'app': 'assessment','label': 'Level1','models': ('assessment.Quiz',)},
 # )
 
+CSRF_TRUSTED_ORIGINS = ['https://limenealwheel.com']
+
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', None)
 
 if EMAIL_BACKEND == 'django.core.mail.backends.smtp.EmailBackend':
