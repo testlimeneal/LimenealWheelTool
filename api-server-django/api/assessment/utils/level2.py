@@ -269,6 +269,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
         # add_image_to_worksheet(worksheet,activities_path,f"{bucket['name']}.png",25,6,120,120)
         # add_image_to_worksheet(worksheet,virtues_path,f"{bucket['name']}.png",30,2,120,120)
 
+        add_image_to_worksheet(worksheet,graphics_path,f"{bucket['name']}.png",50,12,390,560)
         update_worksheet_cells(worksheet,replacements)
 
     elif worksheet_name == 'Page13':
@@ -294,8 +295,8 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None):
             "J35":['user_name',user_profile.name],
             "B48":f"{job_info[1]['job_name']}'s Inclinations",
             "J48":['user_name',user_profile.name],
-            "B63":['user_name',user_profile.name],
-            "J63":['job_name',job_info[1]['job_name']],
+            "B63":['job_name',job_info[1]['job_name']],
+            "J63":['user_name',user_profile.name],
         }
 
         for i in range(38, 45,3):
