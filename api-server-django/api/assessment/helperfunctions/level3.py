@@ -3,6 +3,14 @@ from api.assessment.utils.level3 import Generate_level3_Report
 from api.assessment.helperfunctions.common import get_feature_name_by_id,get_virtue_object_by_dimmension_id
 from api.assessment.helperfunctions.level2 import process_level2_scores
 
+def get_attribute_name(index):
+    if index <= 12:
+        return "level3_power"
+    if 12 < index <=24:
+        return "level3_push"
+    if 24 < index <=36:
+        return "level3_pain"
+    
 def process_level3_scores(user_id):
     responses = Level3Response.objects.filter(user=user_id)
     user_profile = UserProfile.objects.get(user=user_id)
@@ -53,35 +61,54 @@ def process_level3_scores(user_id):
     
     result_dict = {item["id"]: item["value"] for sublist in level2_scores for item in sublist}
     percentage_dict = {key: (value / 94 * 100) for key, value in total_values.items()}
-    # print(dimensions)
-    # print(total_values)
-    # print(percentage_dict)
 
     result_list = []
 
     sorted_keys = sorted(result_dict.keys(), key=lambda key: (result_dict[key] + percentage_dict[key]) / 2,reverse=True)
 
+    virtues_trait_scores = []
+
+    for i,key in enumerate(sorted_keys):
+
+        virtue = get_virtue_object_by_dimmension_id(key)
+        virtue_info = (virtue.virtue, chief_virtues_score[str(key)]*100/36)
+
+        virtues_trait_scores.append(virtue_info)
+
+
+        traits_info =  sorted(
+                    [( v['name'],v['value']*100/26) for k, v in dimensions[key].items()],
+                    key=lambda x: x[1], 
+                    reverse=True  
+                )
+        for trait in traits_info:
+            virtues_trait_scores.append(trait)
+
+    sorted_scores = sorted(virtues_trait_scores, key=lambda x: x[1])
 
     for i,key in enumerate(sorted_keys):
         feature_name = get_feature_name_by_id(key)
         average_value = (result_dict[key] + percentage_dict[key]) / 2
 
-        if 0 <= i <= 2:
-            attribute_name = 'level3_power'
-        elif 3 <= i <= 5:
-            attribute_name = 'level3_push'
-        elif 6 <= i <= 8:
-            attribute_name = 'level3_pain' 
+        virtue = get_virtue_object_by_dimmension_id(key)
+
+        index = [i for i, v in enumerate(sorted_scores) if v[0] == virtue.virtue][0] + 1
 
         
-        virtue = get_virtue_object_by_dimmension_id(key)
-        virtue_info = (virtue.virtue, chief_virtues_score[str(key)]*100/36,getattr(virtue, attribute_name))
+        virtue_info = (virtue.virtue, chief_virtues_score[str(key)]*100/36,getattr(virtue, get_attribute_name(index)))
 
-        traits_info =  sorted(
-                    [( v['name'],v['value']*100/26,v['statements_dict'][attribute_name]) for k, v in dimensions[key].items()],
-                    key=lambda x: x[1], 
-                    reverse=True  
-                )
+        traits_info = sorted(
+        [
+            (
+                v['name'],
+                v['value'] * 100 / 26,
+                v['statements_dict'][get_attribute_name([idx for idx, trait in enumerate(sorted_scores) if trait[0] == v['name']][0] + 1)]
+            )
+            for k, v in dimensions[key].items()
+        ],
+        key=lambda x: x[1],
+        reverse=True
+    )
         result_list.append(
             (
               feature_name,average_value,virtue_info,traits_info
@@ -91,6 +118,9 @@ def process_level3_scores(user_id):
     result_tuple = sorted(result_list, key=lambda x: x[1], reverse=True)
 
     return user_profile,result_tuple
+
+
+
 
 def process_level3_career_report(user_id,report_id):
 
