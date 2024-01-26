@@ -319,7 +319,6 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         cells=('B38', 'B41', 'H38', 'H41', 'M38')
         for count,job in enumerate(power_careers):
             replacements[cells[count]] = job.title
-            print(cells[count],job.title)
         
         
         cells=('B68', 'B71', 'H68', 'H71', 'M68')

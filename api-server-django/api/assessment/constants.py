@@ -11,15 +11,15 @@ COLOR_MAPPING = {
 }
 
 ROLES = {
-    'harmonizer': "Enabling Harmony",
-    'visualizer': "Creating Value",
-    'binder': "Bonding with Others",
-    'guardian': "Planning Actions",
-    'mentor': "Guiding Others",
-    'principal': "Researching for Facts",
-    'angel': "Serving Others",
-    'charmer': "Influencing Others",
-    'dominion': "Achieving Despite Challenges"
+    'harmonizer': "Harmony Orientation", # "Enabling Harmony",
+    'visualizer': "Creation Orientation",# "Creating Value",
+    'binder': "Relationship Orientation",# "Bonding with Others",
+    'guardian': "Discipline Orientation",# "Planning Actions",
+    'mentor': "Guidance Orientation", # "Guiding Others",
+    'principal': "Factual Orientation", # "Researching for Facts",
+    'angel': "Service Orientation", # "Serving Others",
+    'charmer': "Influencing Orientation", # "Influencing Others",
+    'dominion': "Achievement with Risks Orientation" # "Achieving Despite Challenges"
 }
 
 LEVEL3_ROLES = {
