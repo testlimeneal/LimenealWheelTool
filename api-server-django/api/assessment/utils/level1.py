@@ -195,7 +195,7 @@ def update_page2_cells(worksheet, inclines):
     
     
     update_worksheet_cells(worksheet,replacements)
-    add_image_to_worksheet(worksheet,assets_folder,f"{inclines['feature']}.png",17,13,300,400)
+    add_image_to_worksheet(worksheet,assets_folder,f"{inclines['feature']}.png",20,13,200,250)
 
 def update_page3_cells(worksheet, inclines):
     # pass
@@ -216,7 +216,7 @@ def update_page3_cells(worksheet, inclines):
     
 
     update_worksheet_cells(worksheet,replacements)
-    add_image_to_worksheet(worksheet,assets_folder,f"{inclines['feature']}.png",8,7,400,550)
+    add_image_to_worksheet(worksheet,assets_folder,f"{inclines['feature']}.png",11,8,250,300)
     
 
 

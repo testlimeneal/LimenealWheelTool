@@ -17,7 +17,7 @@ def generate_zip_file(user_id, report_ids):
         
         with zipfile.ZipFile(zip_file_path, 'w') as zip_file:
             for report_id in report_ids:
-                logging.info(f'Task for user {user_id} started with report_ids: {report_id}')
+                # logging.info(f'Task for user {user_id} started with report_ids: {report_id}')
                 file_path = generate_report_file_path(user_id, report_id)
                 
                 if os.path.exists(file_path):

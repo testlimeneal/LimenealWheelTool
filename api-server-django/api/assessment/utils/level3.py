@@ -302,13 +302,13 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
     
     
     elif worksheet_name == 'Page11': 
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",14,1,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",14,7,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",14,12,330,450)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",20,2,200,180)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",20,8,200,180)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",20,13,200,180)
 
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[3].lower()}.png",44,1,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[4].lower()}.png",44,7,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[5].lower()}.png",44,12,330,450)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[3].lower()}.png",50,2,200,180)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[4].lower()}.png",50,8,200,180)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[5].lower()}.png",50,13,200,180)
         
         replacements = {}
         
@@ -346,9 +346,9 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         # for i in enumerate
 
     elif worksheet_name == 'Page12': 
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",14,1,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",14,7,330,450)
-        add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",14,12,330,450)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",20,2,200,180)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",20,8,200,180)
+        add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",20,13,200,180)
 
         replacements = {}
 
