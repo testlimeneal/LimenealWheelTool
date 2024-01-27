@@ -84,7 +84,7 @@ def process_level3_scores(user_id):
         for trait in traits_info:
             virtues_trait_scores.append(trait)
 
-    sorted_scores = sorted(virtues_trait_scores, key=lambda x: x[1])
+    sorted_scores = sorted(virtues_trait_scores, key=lambda x: x[1],reverse=True)
 
     for i,key in enumerate(sorted_keys):
         feature_name = get_feature_name_by_id(key)
