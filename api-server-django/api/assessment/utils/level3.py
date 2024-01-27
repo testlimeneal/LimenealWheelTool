@@ -450,7 +450,7 @@ def convert_excel_to_pdf(folder_path, type, excel_filename="level3report.xlsx", 
     with open(pdf_output_path, "wb") as file:
         file.write(pdf_data)
 
-    # for filename in os.listdir(folder_path):
-    #     file_path = os.path.join(folder_path, filename)
-    #     if filename != "output.pdf" and os.path.isfile(file_path):
-    #         os.remove(file_path)
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        if filename != "output.pdf" and os.path.isfile(file_path):
+            os.remove(file_path)
