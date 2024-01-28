@@ -176,11 +176,10 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
      
         add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",20,2,90,90) 
         add_image_to_worksheet(worksheet,virtues_path,f"{data[1]}.png",50,2,90,90) 
-        print(data)
 
     elif worksheet_name in ['Page3','Page5','Page7']:
         add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",20,2,90,90) 
-        
+
     elif worksheet_name == 'Page8': 
         user_profile,job_info,user_data = data  
 
