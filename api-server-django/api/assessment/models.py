@@ -87,7 +87,7 @@ class UserResponse(models.Model):
 
     class Meta:
         unique_together = ['user', 'quiz', 'question','answer']
-
+        verbose_name = "Level1 Response"
 class CareerCluster(models.Model):
     name = models.CharField(max_length=255)
 
@@ -103,6 +103,9 @@ class Job(models.Model):
 
     def __str__(self):
         return self.title
+    
+    class Meta:
+        verbose_name = "Careers"
 
 class ReportType(models.Model):
     LEVEL_CHOICES = (
@@ -301,5 +304,5 @@ class Level3Response(models.Model):
 
 
 class Level3Group(models.Model):
-    name = models.CharField(max_length=255)  # Add a name field to Level3Group
+    name = models.CharField(max_length=255)  
     level3_buckets = models.ManyToManyField(Level3Bucket, related_name='level3_groups')
