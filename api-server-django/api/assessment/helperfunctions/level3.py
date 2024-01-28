@@ -116,7 +116,8 @@ def process_level3_scores(user_id):
         )
 
     result_tuple = sorted(result_list, key=lambda x: x[1], reverse=True)
-
+    user_profile.level3 = result_tuple
+    user_profile.save()
     return user_profile,result_tuple
 
 

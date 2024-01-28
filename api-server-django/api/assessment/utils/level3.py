@@ -2,19 +2,17 @@ import os
 import uuid
 from openpyxl import load_workbook
 from openpyxl.drawing.image import Image
-from api.assessment.constants import ROLES, COLOR_MAPPING, LEVEL3_ROLES
+from api.assessment.constants import ROLES, COLOR_MAPPING
 
 from api.assessment.utils.common import generate_user_pie_chart,generate_jobs_pie_chart
 import matplotlib
 matplotlib.use('agg')
 from matplotlib import pyplot as plt
-from matplotlib.patheffects import withStroke
-import matplotlib.patheffects as path_effects
 import numpy as np
 import excel2img
 import img2pdf
 from api.constants import API_DIR
-from api.assessment.helperfunctions.common import get_careers_from_dimmensions, generate_report_file_path
+from api.assessment.helperfunctions.common import get_careers_from_dimmensions,get_careers_summary
 
 
 activities_path = os.path.join(API_DIR, "assessment","assets","level2", 'dimmensions')
@@ -85,9 +83,11 @@ def Generate_level3_Report(user_profile,data):
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page9',data=(user_profile,job_info,user_dimmensions),folder_path=new_folder_path)
     excel = insert_image_into_excel(excel=excel,worksheet_name='Page10',data=(user_profile,job_info,user_dimmensions),folder_path=new_folder_path)
     
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page11',data=user_dimmensions[0:6])
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page12',data=user_dimmensions[6:9])
-    excel = insert_image_into_excel(excel=excel,worksheet_name='Page13',data=data)
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page11',data=(user_profile,user_dimmensions[0:9]))
+
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page12',data=user_dimmensions[0:6])
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page13',data=user_dimmensions[6:9])
+    excel = insert_image_into_excel(excel=excel,worksheet_name='Page14',data=data)
 
     excel.save(os.path.join(new_folder_path, "level3report.xlsx"))
 
@@ -176,10 +176,11 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
      
         add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",20,2,90,90) 
         add_image_to_worksheet(worksheet,virtues_path,f"{data[1]}.png",50,2,90,90) 
+        print(data)
 
-    elif worksheet_name == ['Page3','Page5','Page7']:
+    elif worksheet_name in ['Page3','Page5','Page7']:
         add_image_to_worksheet(worksheet,virtues_path,f"{data[0]}.png",20,2,90,90) 
-       
+        
     elif worksheet_name == 'Page8': 
         user_profile,job_info,user_data = data  
 
@@ -299,9 +300,20 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         update_worksheet_cells(worksheet,replacements)
         
     
+    elif worksheet_name == 'Page11':
+        user_profile,sorted_dimensions = data
+
+        summary = get_careers_summary(user_profile,sorted_dimensions)
+
+        replacements = {}
+        for idx,career in enumerate(summary):
+            replacements[f"B{31+3*idx}"] = career['career_name']
+            replacements[f"E{31+3*idx}"] = career['career_dimension']
+            replacements[f"I{31+3*idx}"] = ", ".join(sorted_dimensions[0:3])
+            replacements[f"M{31+3*idx}"] = career['match']
+        update_worksheet_cells(worksheet,replacements)
     
-    
-    elif worksheet_name == 'Page11': 
+    elif worksheet_name == 'Page12': 
         add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",20,2,200,180)
         add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",20,8,200,180)
         add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",20,13,200,180)
@@ -345,7 +357,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
        
         # for i in enumerate
 
-    elif worksheet_name == 'Page12': 
+    elif worksheet_name == 'Page13': 
         add_image_to_worksheet(worksheet,assets_folder,f"{data[0].lower()}.png",20,2,200,180)
         add_image_to_worksheet(worksheet,assets_folder,f"{data[1].lower()}.png",20,8,200,180)
         add_image_to_worksheet(worksheet,assets_folder,f"{data[2].lower()}.png",20,13,200,180)
@@ -371,9 +383,9 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         update_worksheet_cells(worksheet,replacements)
         
 
-    elif worksheet_name == 'Page13':
+    elif worksheet_name == 'Page14':
         
-        worksheet = workbook['Page12'] #Did this because code was already implemeneted
+        worksheet = workbook['Page13'] #Did this because code was already implemeneted
         replacements = {}
         rows = {
             "Binder":"V4",
@@ -423,7 +435,7 @@ def insert_image_into_excel(worksheet_name, data=None,excel=None,folder_path=Non
         
     return workbook
 
-def convert_excel_to_pdf(folder_path, type, excel_filename="level3report.xlsx", num_pages=15, page_prefix="Page"):
+def convert_excel_to_pdf(folder_path, type, excel_filename="level3report.xlsx", num_pages=16, page_prefix="Page"):
     
     image_paths = []
     # if type == "Career":

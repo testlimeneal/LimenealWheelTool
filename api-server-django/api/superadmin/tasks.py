@@ -6,7 +6,7 @@ import tempfile
 import os
 from api.assessment.helperfunctions.common import generate_report_file_path
 from celery import shared_task
-import logging
+# import logging
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -33,7 +33,7 @@ def generate_zip_file(user_id, report_ids):
 
         return zip_data, 'reports.zip'
 
-@shared_task
+@shared_task  # ===== comment for testing locally =====
 def generate_zip_file_async(user_id, report_ids):
 
     temp = generate_zip_file(user_id, report_ids)

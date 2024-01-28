@@ -314,6 +314,7 @@ class DownloadReportsView(generics.GenericAPIView):
         processed = data.get('processed',False)
         if not processed:
             task = generate_zip_file_async.delay(user_id, report_ids)
+            # task = generate_zip_file_async(user_id, report_ids) ===== uncomment for testing locally =====
             return JsonResponse({"msg":f'Check Email for Requested {len(report_ids)} Reports of User-{user_id} '})
 
         zip_data, zip_file_name = generate_zip_file(user_id, report_ids)
